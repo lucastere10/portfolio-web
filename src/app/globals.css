@@ -1,0 +1,282 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-syne);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-surface: var(--surface);
+  --color-gold: var(--gold);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+  /* Body: warm editorial off-white */
+  --background: oklch(0.987 0.004 85);
+  --foreground: oklch(0.10 0.008 85);
+  --surface: oklch(0.96 0.005 85);
+  --card: oklch(0.975 0.004 85);
+  --card-foreground: oklch(0.10 0.008 85);
+  --popover: oklch(0.975 0.004 85);
+  --popover-foreground: oklch(0.10 0.008 85);
+  --primary: oklch(0.10 0.008 85);
+  --primary-foreground: oklch(0.987 0.004 85);
+  --secondary: oklch(0.93 0.005 85);
+  --secondary-foreground: oklch(0.10 0.008 85);
+  --muted: oklch(0.93 0.005 85);
+  --muted-foreground: oklch(0.47 0.012 85);
+  --accent: oklch(0.93 0.005 85);
+  --accent-foreground: oklch(0.10 0.008 85);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.872 0.008 85);
+  --input: oklch(0.872 0.008 85);
+  /* Amber gold — trust, quality, result */
+  --gold: oklch(0.72 0.145 75);
+  --gold-dim: oklch(0.72 0.145 75 / 0.14);
+  --gold-border: oklch(0.72 0.145 75 / 0.30);
+  --ring: oklch(0.72 0.145 75);
+  /* Hero — light mode palette */
+  --hero-bg: oklch(0.955 0.012 250);
+  --hero-panel: oklch(0.982 0.006 260 / 0.88);
+  --hero-border: oklch(0.812 0.020 255 / 0.65);
+  --hero-text: oklch(0.185 0.020 258);
+  --hero-muted: oklch(0.395 0.025 260);
+  --hero-grid-dot: oklch(0.35 0.03 260 / 0.20);
+  --hero-glow-1: radial-gradient(circle, oklch(0.81 0.08 230 / 0.24) 0%, transparent 70%);
+  --hero-glow-2: radial-gradient(circle, oklch(0.79 0.11 78 / 0.20) 0%, transparent 70%);
+  --hero-chip-bg: oklch(0.95 0.008 250 / 0.64);
+  /* Status indicator green */
+  --status-green: oklch(0.72 0.18 145);
+  --radius: 0.5rem;
+}
+
+html.dark {
+  /* Navy-deep dark palette */
+  --background: oklch(0.115 0.028 265);
+  --foreground: oklch(0.93 0.005 85);
+  --surface: oklch(0.145 0.025 265);
+  --card: oklch(0.145 0.025 265);
+  --card-foreground: oklch(0.93 0.005 85);
+  --popover: oklch(0.145 0.025 265);
+  --popover-foreground: oklch(0.93 0.005 85);
+  --primary: oklch(0.93 0.005 85);
+  --primary-foreground: oklch(0.115 0.028 265);
+  --secondary: oklch(0.185 0.022 265);
+  --secondary-foreground: oklch(0.93 0.005 85);
+  --muted: oklch(0.185 0.022 265);
+  --muted-foreground: oklch(0.58 0.020 265);
+  --accent: oklch(0.185 0.022 265);
+  --accent-foreground: oklch(0.93 0.005 85);
+  --border: oklch(0.220 0.025 265);
+  --input: oklch(0.220 0.025 265);
+  --ring: oklch(0.72 0.145 75);
+  /* Hero — dark mode palette */
+  --hero-bg: oklch(0.082 0.028 265);
+  --hero-panel: oklch(0.115 0.028 265 / 0.88);
+  --hero-border: oklch(0.200 0.028 265);
+  --hero-text: oklch(0.93 0.005 85);
+  --hero-muted: oklch(0.67 0.018 265);
+  --hero-grid-dot: oklch(0.84 0.010 85 / 0.20);
+  --hero-glow-1: radial-gradient(circle, oklch(0.50 0.15 250 / 0.20) 0%, transparent 70%);
+  --hero-glow-2: radial-gradient(circle, oklch(0.72 0.145 75 / 0.16) 0%, transparent 70%);
+  --hero-chip-bg: oklch(0.135 0.028 265 / 0.72);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+  }
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  /* Typography scale */
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  /* ── Body section fade-up ─────────────────────────── */
+  .animate-fade-up {
+    animation: fade-up 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Hero staggered entry ─────────────────────────── */
+  .hero-fade-0 { animation: hero-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0ms    both; }
+  .hero-fade-1 { animation: hero-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) 100ms  both; }
+  .hero-fade-2 { animation: hero-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) 200ms  both; }
+  .hero-fade-3 { animation: hero-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) 300ms  both; }
+  .hero-fade-4 { animation: hero-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) 400ms  both; }
+  .hero-fade-5 { animation: hero-fade-up 0.75s cubic-bezier(0.16, 1, 0.3, 1) 500ms  both; }
+  @keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Hero panel slide from right ─────────────────── */
+  .hero-panel-in {
+    animation: panel-slide 0.85s cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+  }
+  @keyframes panel-slide {
+    from { opacity: 0; transform: translateX(36px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .hero-panel-float {
+    animation: hero-panel-float 7.5s ease-in-out 1s infinite;
+  }
+  @keyframes hero-panel-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .hero-grid-drift {
+    animation: hero-grid-drift 12s linear infinite;
+  }
+  @keyframes hero-grid-drift {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(16px, 16px, 0); }
+  }
+
+  .animate-hero-orb-a {
+    animation: hero-orb-a 13s ease-in-out infinite;
+  }
+  .animate-hero-orb-b {
+    animation: hero-orb-b 15s ease-in-out infinite;
+  }
+  @keyframes hero-orb-a {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(16px, -14px, 0) scale(1.06); }
+  }
+  @keyframes hero-orb-b {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(-14px, 12px, 0) scale(1.05); }
+  }
+
+  /* ── Status dot pulse glow ───────────────────────── */
+  .animate-pulse-dot {
+    animation: pulse-dot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 0 0 oklch(0.72 0.18 145 / 0.6); }
+    50%       { box-shadow: 0 0 0 5px oklch(0.72 0.18 145 / 0); }
+  }
+
+  /* ── Cursor blink ────────────────────────────────── */
+  .animate-blink {
+    animation: blink 1.1s step-start infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  /* ── Scroll bounce indicator ─────────────────────── */
+  .animate-scroll-bounce {
+    animation: scroll-bounce 1.6s ease-in-out infinite;
+  }
+  @keyframes scroll-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(6px); }
+  }
+
+  /* ── Content width helpers ───────────────────────── */
+  .content-width {
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .content-width-wide {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── Mono text ───────────────────────────────────── */
+  .text-mono {
+    font-family: var(--font-geist-mono), monospace;
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* ── Section label ───────────────────────────────── */
+  .section-label {
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    font-feature-settings: "tnum" 1;
+  }
+
+  /* ── Gold badge pill ─────────────────────────────── */
+  .badge-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 999px;
+    padding: 0.125rem 0.625rem;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background-color: var(--gold-dim);
+    color: var(--gold);
+    border: 1px solid var(--gold-border);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-up,
+    .hero-fade-0,
+    .hero-fade-1,
+    .hero-fade-2,
+    .hero-fade-3,
+    .hero-fade-4,
+    .hero-fade-5,
+    .hero-panel-in,
+    .hero-panel-float,
+    .animate-pulse-dot,
+    .animate-blink,
+    .animate-scroll-bounce,
+    .hero-grid-drift,
+    .animate-hero-orb-a,
+    .animate-hero-orb-b {
+      animation: none !important;
+      transform: none !important;
+    }
+  }
+}
