@@ -3,7 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
-import { projects, resolveLocale, getProjectBySlug, type Domain } from "@/lib/projects";
+import {
+  projects,
+  resolveLocale,
+  getProjectBySlug,
+  type Domain,
+} from "@/lib/projects";
 
 const allDomains: Domain[] = [
   "AI Agents",
@@ -43,7 +48,7 @@ export default function WorkPage() {
         <div className="flex flex-wrap gap-2 mb-12">
           <button
             onClick={() => setActive(null)}
-            className={`text-mono text-xs px-3 py-1.5 rounded border transition-colors ${
+            className={`text-mono text-xs px-3 py-1.5 rounded border transition-colors cursor-pointer ${
               active === null
                 ? "border-[var(--gold)] bg-[var(--gold-dim)] text-[var(--gold)]"
                 : "border-border text-muted-foreground hover:text-foreground hover:border-foreground"
@@ -55,7 +60,7 @@ export default function WorkPage() {
             <button
               key={domain}
               onClick={() => setActive(active === domain ? null : domain)}
-              className={`text-mono text-xs px-3 py-1.5 rounded border transition-colors ${
+              className={`text-mono text-xs px-3 py-1.5 rounded border transition-colors cursor-pointer ${
                 active === domain
                   ? "border-[var(--gold)] bg-[var(--gold-dim)] text-[var(--gold)]"
                   : "border-border text-muted-foreground hover:text-foreground hover:border-foreground"
@@ -79,42 +84,42 @@ export default function WorkPage() {
               <Link
                 key={slug}
                 href={`/work/${slug}`}
-              className={`group flex flex-col sm:flex-row sm:items-start gap-4 py-8 ${
-                i < filtered.length - 1 ? "border-b border-border" : ""
-              } hover:opacity-75 transition-opacity`}
-            >
-              {/* Domain */}
-              <div className="sm:w-48 shrink-0">
-                <span className="badge-gold">{domain}</span>
-              </div>
-
-              {/* Name + Tagline */}
-              <div className="flex-1 flex flex-col gap-1">
-                <h2 className="text-base font-semibold text-foreground leading-snug">
-                  {name}
-                </h2>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {tagline}
-                </p>
-              </div>
-
-              {/* Stack + arrow */}
-              <div className="sm:w-56 shrink-0 flex flex-col gap-2 sm:items-end">
-                <div className="flex flex-wrap gap-1.5 sm:justify-end">
-                  {stack.slice(0, 4).map((tech) => (
-                    <span
-                      key={tech}
-                      className="text-mono text-[10px] text-muted-foreground border border-border rounded px-2 py-0.5"
-                    >
-                      {tech}
-                    </span>
-                  ))}
+                className={`group flex flex-col sm:flex-row sm:items-start gap-4 py-8 ${
+                  i < filtered.length - 1 ? "border-b border-border" : ""
+                } hover:opacity-75 transition-opacity`}
+              >
+                {/* Domain */}
+                <div className="sm:w-48 shrink-0">
+                  <span className="badge-gold">{domain}</span>
                 </div>
-                <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors inline-flex items-center gap-1">
-                  Case study <MoveRight className="w-3 h-3" />
-                </span>
-              </div>
-            </Link>
+
+                {/* Name + Tagline */}
+                <div className="flex-1 flex flex-col gap-1">
+                  <h2 className="text-base font-semibold text-foreground leading-snug">
+                    {name}
+                  </h2>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {tagline}
+                  </p>
+                </div>
+
+                {/* Stack + arrow */}
+                <div className="sm:w-56 shrink-0 flex flex-col gap-2 sm:items-end">
+                  <div className="flex flex-wrap gap-1.5 sm:justify-end">
+                    {stack.slice(0, 4).map((tech) => (
+                      <span
+                        key={tech}
+                        className="text-mono text-[10px] text-muted-foreground border border-border rounded px-2 py-0.5"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors inline-flex items-center gap-1">
+                    Case study <MoveRight className="w-3 h-3" />
+                  </span>
+                </div>
+              </Link>
             );
           })}
 

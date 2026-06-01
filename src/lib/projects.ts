@@ -41,10 +41,10 @@ export interface CaseStudy extends Project {
   en?: CaseStudyEN;
 }
 
-export type ResolvedProject = Omit<CaseStudy, 'en'>;
+export type ResolvedProject = Omit<CaseStudy, "en">;
 
 export function resolveLocale(cs: CaseStudy, locale: string): ResolvedProject {
-  if (locale === 'en' && cs.en) {
+  if (locale === "en" && cs.en) {
     const e = cs.en;
     return {
       slug: cs.slug,
@@ -86,17 +86,26 @@ export const projects: Project[] = [
     slug: "ai-agents-adk",
     name: "AI Agents com ADK",
     domain: "AI Agents",
-    tagline: "Agentes inteligentes integrados ao ecossistema GCP via MCP Toolbox",
+    tagline:
+      "Agentes inteligentes integrados ao ecossistema GCP via MCP Toolbox",
     impact:
       "Agentes autônomos integrando Jira, Looker e BigQuery via MCP Toolbox, implantados no Cloud Run com Vertex AI.",
-    stack: ["Python", "ADK", "Vertex AI", "Cloud Run", "BigQuery", "MCP Toolbox"],
+    stack: [
+      "Python",
+      "ADK",
+      "Vertex AI",
+      "Cloud Run",
+      "BigQuery",
+      "MCP Toolbox",
+    ],
     featured: true,
   },
   {
     slug: "payment-integration-platform",
     name: "Plataforma de Integração de Pagamentos",
     domain: "Payment Systems",
-    tagline: "Stripe event-driven: checkout, assinaturas e gestão de ciclo de vida",
+    tagline:
+      "Stripe event-driven: checkout, assinaturas e gestão de ciclo de vida",
     impact:
       "Integração completa com Stripe — webhooks, checkout automático, gestão de assinaturas e recuperação de pagamentos falhos.",
     stack: ["Python", "Stripe", "Webhooks", "PostgreSQL", "FastAPI"],
@@ -126,7 +135,8 @@ export const projects: Project[] = [
     slug: "computer-vision-analytics",
     name: "Analytics de Visão Computacional",
     domain: "Computer Vision",
-    tagline: "Contagem de pessoas e tempo de permanência para métricas operacionais",
+    tagline:
+      "Contagem de pessoas e tempo de permanência para métricas operacionais",
     impact:
       "Pipeline de visão computacional para contagem de pessoas e análise de tempo de permanência gerando métricas operacionais em tempo real.",
     stack: ["Python", "OpenCV", "YOLO", "PostgreSQL", "FastAPI"],
@@ -149,10 +159,18 @@ export const caseStudies: CaseStudy[] = [
     slug: "ai-agents-adk",
     name: "AI Agents com ADK",
     domain: "AI Agents",
-    tagline: "Agentes inteligentes integrados ao ecossistema GCP via MCP Toolbox",
+    tagline:
+      "Agentes inteligentes integrados ao ecossistema GCP via MCP Toolbox",
     impact:
       "Agentes autônomos integrando Jira, Looker e BigQuery via MCP Toolbox, implantados no Cloud Run com Vertex AI.",
-    stack: ["Python", "ADK", "Vertex AI", "Cloud Run", "BigQuery", "MCP Toolbox"],
+    stack: [
+      "Python",
+      "ADK",
+      "Vertex AI",
+      "Cloud Run",
+      "BigQuery",
+      "MCP Toolbox",
+    ],
     featured: true,
     context:
       "A equipe precisava de agentes inteligentes que pudessem consultar dados de negócio em Jira, Looker e BigQuery de forma autônoma, sem expor APIs internas diretamente ao modelo.",
@@ -195,9 +213,12 @@ export const caseStudies: CaseStudy[] = [
     ],
     en: {
       name: "AI Agents with ADK",
-      tagline: "Intelligent agents integrated into the GCP ecosystem via MCP Toolbox",
-      impact: "Autonomous agents integrating Jira, Looker, and BigQuery via MCP Toolbox, deployed on Cloud Run with Vertex AI.",
-      context: "The team needed intelligent agents that could autonomously query business data in Jira, Looker, and BigQuery, without directly exposing internal APIs to the model.",
+      tagline:
+        "Intelligent agents integrated into the GCP ecosystem via MCP Toolbox",
+      impact:
+        "Autonomous agents integrating Jira, Looker, and BigQuery via MCP Toolbox, deployed on Cloud Run with Vertex AI.",
+      context:
+        "The team needed intelligent agents that could autonomously query business data in Jira, Looker, and BigQuery, without directly exposing internal APIs to the model.",
       challenges: [
         "Orchestrating multiple tools (Jira, Looker, BigQuery) reliably without the agent entering loops",
         "Ensuring secure access to sensitive data via MCP Toolbox in the GCP environment",
@@ -207,19 +228,24 @@ export const caseStudies: CaseStudy[] = [
       decisions: [
         {
           title: "ADK + MCP Toolbox as the integration layer",
-          reasoning: "Google's ADK (Agent Development Kit) offers native abstractions for orchestrating agents in the Vertex AI ecosystem. MCP Toolbox allows exposing business tools in a standardized way without direct model coupling.",
+          reasoning:
+            "Google's ADK (Agent Development Kit) offers native abstractions for orchestrating agents in the Vertex AI ecosystem. MCP Toolbox allows exposing business tools in a standardized way without direct model coupling.",
         },
         {
           title: "Cloud Run for serverless deployment",
-          reasoning: "Scales to zero for infrequent invocations, native integration with Vertex AI and GCP IAM, no infrastructure management overhead.",
+          reasoning:
+            "Scales to zero for infrequent invocations, native integration with Vertex AI and GCP IAM, no infrastructure management overhead.",
         },
         {
           title: "BigQuery as the primary analytical data source",
-          reasoning: "Eliminates the need for a separate cache layer — the agent queries BigQuery directly via generated SQL, with paginated results to fit within context.",
+          reasoning:
+            "Eliminates the need for a separate cache layer — the agent queries BigQuery directly via generated SQL, with paginated results to fit within context.",
         },
       ],
-      tradeoffs: "MCP Toolbox adds an indirection layer that increases latency by ~200ms per tool call. Acceptable for conversational use cases, but not for high-frequency pipelines.",
-      implementation: "Each agent is a Cloud Run service with tool configuration in YAML. MCP Toolbox manages authentication and API exposure for Jira and Looker. The Python orchestrator uses ADK to decide which tool to invoke based on conversation context.",
+      tradeoffs:
+        "MCP Toolbox adds an indirection layer that increases latency by ~200ms per tool call. Acceptable for conversational use cases, but not for high-frequency pipelines.",
+      implementation:
+        "Each agent is a Cloud Run service with tool configuration in YAML. MCP Toolbox manages authentication and API exposure for Jira and Looker. The Python orchestrator uses ADK to decide which tool to invoke based on conversation context.",
       learnings: [
         "Describing tools with concrete examples of when NOT to use them reduces unnecessary calls by ~40%",
         "Separating agents by domain (data vs. project vs. report) is more robust than a generic agent with many tools",
@@ -236,7 +262,8 @@ export const caseStudies: CaseStudy[] = [
     slug: "payment-integration-platform",
     name: "Plataforma de Integração de Pagamentos",
     domain: "Payment Systems",
-    tagline: "Stripe event-driven: checkout, assinaturas e gestão de ciclo de vida",
+    tagline:
+      "Stripe event-driven: checkout, assinaturas e gestão de ciclo de vida",
     impact:
       "Integração completa com Stripe — webhooks, checkout automático, gestão de assinaturas e recuperação de pagamentos falhos.",
     stack: ["Python", "Stripe", "Webhooks", "PostgreSQL", "FastAPI"],
@@ -282,9 +309,12 @@ export const caseStudies: CaseStudy[] = [
     ],
     en: {
       name: "Payment Integration Platform",
-      tagline: "Stripe event-driven: checkout, subscriptions, and lifecycle management",
-      impact: "Full Stripe integration — webhooks, automated checkout, subscription management, and failed payment recovery.",
-      context: "The product needed to support recurring payments with multiple plans, real-time upgrades/downgrades, and automatic delinquency recovery.",
+      tagline:
+        "Stripe event-driven: checkout, subscriptions, and lifecycle management",
+      impact:
+        "Full Stripe integration — webhooks, automated checkout, subscription management, and failed payment recovery.",
+      context:
+        "The product needed to support recurring payments with multiple plans, real-time upgrades/downgrades, and automatic delinquency recovery.",
       challenges: [
         "Ensuring idempotency in Stripe webhook processing (events can arrive duplicated)",
         "Synchronizing subscription state between Stripe and the local database without inconsistency",
@@ -294,19 +324,24 @@ export const caseStudies: CaseStudy[] = [
       decisions: [
         {
           title: "Event-driven via webhooks with idempotency",
-          reasoning: "Each Stripe event is processed exactly once using the event ID as an idempotency key in the database. Guarantees consistency even with Stripe retries.",
+          reasoning:
+            "Each Stripe event is processed exactly once using the event ID as an idempotency key in the database. Guarantees consistency even with Stripe retries.",
         },
         {
           title: "Local state as the source of truth for the application",
-          reasoning: "The application maintains its own subscription model synchronized via webhooks. This allows fast queries without dependence on Stripe API latency.",
+          reasoning:
+            "The application maintains its own subscription model synchronized via webhooks. This allows fast queries without dependence on Stripe API latency.",
         },
         {
           title: "Checkout Session vs. Payment Intent",
-          reasoning: "Checkout Session for new flows (UI hosted by Stripe, smaller PCI surface). Payment Intent only for automatic renewals already authorized.",
+          reasoning:
+            "Checkout Session for new flows (UI hosted by Stripe, smaller PCI surface). Payment Intent only for automatic renewals already authorized.",
         },
       ],
-      tradeoffs: "Maintaining a local duplicate state requires periodic reconciliation with the Stripe API to detect drift. A daily reconciliation job was sufficient for the current volume.",
-      implementation: "FastAPI receives Stripe webhooks with HMAC signature verification. Each event type has a dedicated handler. Subscription state saved in PostgreSQL with status enum (active, past_due, canceled, trialing).",
+      tradeoffs:
+        "Maintaining a local duplicate state requires periodic reconciliation with the Stripe API to detect drift. A daily reconciliation job was sufficient for the current volume.",
+      implementation:
+        "FastAPI receives Stripe webhooks with HMAC signature verification. Each event type has a dedicated handler. Subscription state saved in PostgreSQL with status enum (active, past_due, canceled, trialing).",
       learnings: [
         "Testing webhooks locally with Stripe CLI before production saves hours of debugging",
         "Logging the full event payload (truncated) makes payment dispute auditing easier",
@@ -370,8 +405,10 @@ export const caseStudies: CaseStudy[] = [
     en: {
       name: "GPOS Payment System",
       tagline: ".NET/C# backend for PIX and cards with mTLS authentication",
-      impact: "Complete .NET/C# payment system with PIX, cards, mTLS, and remote terminal registration — eliminating the need to ship physical devices.",
-      context: "The GPOS product needed a robust backend to process payments via PIX and cards, with mutual authentication between terminals and the server, and remote registration of new devices.",
+      impact:
+        "Complete .NET/C# payment system with PIX, cards, mTLS, and remote terminal registration — eliminating the need to ship physical devices.",
+      context:
+        "The GPOS product needed a robust backend to process payments via PIX and cards, with mutual authentication between terminals and the server, and remote registration of new devices.",
       challenges: [
         "Implementing mTLS for mutual authentication between physical terminals and the server",
         "Ensuring compliance with BACEN rules for PIX transactions",
@@ -381,19 +418,24 @@ export const caseStudies: CaseStudy[] = [
       decisions: [
         {
           title: "mTLS for bilateral terminal-server authentication",
-          reasoning: "Physical terminals cannot depend on user-rotatable credentials. Client certificates installed on the terminal ensure device identity without human intervention.",
+          reasoning:
+            "Physical terminals cannot depend on user-rotatable credentials. Client certificates installed on the terminal ensure device identity without human intervention.",
         },
         {
           title: "Remote terminal registration",
-          reasoning: "The previous process required physically sending the device for configuration. The new flow allows registration via authenticated API during onboarding, significantly reducing logistics costs.",
+          reasoning:
+            "The previous process required physically sending the device for configuration. The new flow allows registration via authenticated API during onboarding, significantly reducing logistics costs.",
         },
         {
           title: ".NET as the primary runtime",
-          reasoning: "Already established stack at the company with mature libraries for PIX (BACEN SPI) and card brand integrations via ISO 8583.",
+          reasoning:
+            "Already established stack at the company with mature libraries for PIX (BACEN SPI) and card brand integrations via ISO 8583.",
         },
       ],
-      tradeoffs: "mTLS adds complexity to certificate lifecycle management (expiration, revocation). It was necessary to implement an automatic renewal process before expiry.",
-      implementation: ".NET 8 with ASP.NET Core, Kestrel configuration for mTLS with private CA validation. PIX implemented following the BACEN SPI specification. Terminal registration via authenticated endpoint with multiple verification factors.",
+      tradeoffs:
+        "mTLS adds complexity to certificate lifecycle management (expiration, revocation). It was necessary to implement an automatic renewal process before expiry.",
+      implementation:
+        ".NET 8 with ASP.NET Core, Kestrel configuration for mTLS with private CA validation. PIX implemented following the BACEN SPI specification. Terminal registration via authenticated endpoint with multiple verification factors.",
       learnings: [
         "BACEN's PIX documentation is extensive but precise — following it exactly avoids rejections during integration",
         "Implementing a circuit breaker on PSP calls prevents cascade failures during bank unavailability",
@@ -445,8 +487,10 @@ export const caseStudies: CaseStudy[] = [
     en: {
       name: "Transactional Email Microservice",
       tagline: "Queue-based decoupled microservice for email delivery",
-      impact: "Decoupled microservice with message queue, reused across multiple products without code changes.",
-      context: "Multiple company products needed to send transactional emails (confirmation, notification, alerts). Each product had its own duplicated implementation.",
+      impact:
+        "Decoupled microservice with message queue, reused across multiple products without code changes.",
+      context:
+        "Multiple company products needed to send transactional emails (confirmation, notification, alerts). Each product had its own duplicated implementation.",
       challenges: [
         "Completely decoupling email sending from product business logic",
         "Ensuring reliable delivery even when the SMTP provider is unavailable",
@@ -455,15 +499,19 @@ export const caseStudies: CaseStudy[] = [
       decisions: [
         {
           title: "Message queue as the public interface",
-          reasoning: "Producers publish to the queue and are unaffected by SMTP unavailability. The consumer processes at the provider's rate, with automatic retry.",
+          reasoning:
+            "Producers publish to the queue and are unaffected by SMTP unavailability. The consumer processes at the provider's rate, with automatic retry.",
         },
         {
           title: "Templates stored separately",
-          reasoning: "Templates in the database allow content changes without deployment. Producers send only the data payload.",
+          reasoning:
+            "Templates in the database allow content changes without deployment. Producers send only the data payload.",
         },
       ],
-      tradeoffs: "Asynchronous delivery means the sender doesn't immediately know if the email was sent. Acceptable for transactional emails where seconds of latency is tolerated.",
-      implementation: "Python consumer reading from RabbitMQ queue, rendering Jinja2 templates, sending via SMTP with exponential retry. Dead letter queue for persistent failures with operational alerting.",
+      tradeoffs:
+        "Asynchronous delivery means the sender doesn't immediately know if the email was sent. Acceptable for transactional emails where seconds of latency is tolerated.",
+      implementation:
+        "Python consumer reading from RabbitMQ queue, rendering Jinja2 templates, sending via SMTP with exponential retry. Dead letter queue for persistent failures with operational alerting.",
       learnings: [
         "Dead letter queue is essential — without it, failed emails are silently lost",
         "Rate limiting on the consumer prevents SMTP provider bans from burst sending",
@@ -474,7 +522,8 @@ export const caseStudies: CaseStudy[] = [
     slug: "computer-vision-analytics",
     name: "Analytics de Visão Computacional",
     domain: "Computer Vision",
-    tagline: "Contagem de pessoas e tempo de permanência para métricas operacionais",
+    tagline:
+      "Contagem de pessoas e tempo de permanência para métricas operacionais",
     impact:
       "Pipeline de visão computacional para contagem de pessoas e análise de tempo de permanência gerando métricas operacionais em tempo real.",
     stack: ["Python", "OpenCV", "YOLO", "PostgreSQL", "FastAPI"],
@@ -509,8 +558,10 @@ export const caseStudies: CaseStudy[] = [
     en: {
       name: "Computer Vision Analytics",
       tagline: "People counting and dwell time for operational metrics",
-      impact: "Computer vision pipeline for people counting and dwell time analysis generating real-time operational metrics.",
-      context: "Operations needed to understand people flow in physical spaces to optimize staffing and service scale.",
+      impact:
+        "Computer vision pipeline for people counting and dwell time analysis generating real-time operational metrics.",
+      context:
+        "Operations needed to understand people flow in physical spaces to optimize staffing and service scale.",
       challenges: [
         "Detecting and tracking people with acceptable accuracy on limited hardware",
         "Calculating dwell time even with partial camera occlusion",
@@ -519,15 +570,19 @@ export const caseStudies: CaseStudy[] = [
       decisions: [
         {
           title: "YOLO for detection + IoU-based tracker",
-          reasoning: "YOLO offers adequate speed for real-time processing. IoU-based tracker is simple and robust enough for low-occlusion scenarios.",
+          reasoning:
+            "YOLO offers adequate speed for real-time processing. IoU-based tracker is simple and robust enough for low-occlusion scenarios.",
         },
         {
           title: "In-memory aggregation with periodic flush",
-          reasoning: "Writing to the database every frame would be impractical. Accumulates in memory and persists in 1-minute windows.",
+          reasoning:
+            "Writing to the database every frame would be impractical. Accumulates in memory and persists in 1-minute windows.",
         },
       ],
-      tradeoffs: "Data loss on crash between flushes. Acceptable given that operational metrics have tolerance for point-in-time data loss.",
-      implementation: "OpenCV + YOLO pipeline running in a dedicated process. FastAPI exposing aggregated metrics. Dashboard with flow charts by hour.",
+      tradeoffs:
+        "Data loss on crash between flushes. Acceptable given that operational metrics have tolerance for point-in-time data loss.",
+      implementation:
+        "OpenCV + YOLO pipeline running in a dedicated process. FastAPI exposing aggregated metrics. Dashboard with flow charts by hour.",
       learnings: [
         "Calibrating the entry/exit counting line requires on-site testing in the physical space",
         "Lighting varies greatly throughout the day — histogram normalization improves detection consistency",
@@ -573,8 +628,10 @@ export const caseStudies: CaseStudy[] = [
     en: {
       name: "Service Licensing System",
       tagline: "Token activation, permission management, and admin CRUDs",
-      impact: "Licensing system with token activation, granular permission control, and complete admin panel.",
-      context: "The product needed to control access to features by license plan, with self-service activation and centralized admin management.",
+      impact:
+        "Licensing system with token activation, granular permission control, and complete admin panel.",
+      context:
+        "The product needed to control access to features by license plan, with self-service activation and centralized admin management.",
       challenges: [
         "Modeling granular permissions per feature without exploding schema complexity",
         "Token activation flow with expiration and single-use invalidation",
@@ -583,15 +640,19 @@ export const caseStudies: CaseStudy[] = [
       decisions: [
         {
           title: "Single-use activation tokens",
-          reasoning: "Tokens generated at sale, hashed in the database, valid for N days. After use, marked as consumed. Prevents reuse and is easy to audit.",
+          reasoning:
+            "Tokens generated at sale, hashed in the database, valid for N days. After use, marked as consumed. Prevents reuse and is easy to audit.",
         },
         {
           title: "Bit-flag permissions instead of junction table",
-          reasoning: "Permission count is fixed and small (<64). Bit-flag simplifies verification queries and reduces joins.",
+          reasoning:
+            "Permission count is fixed and small (<64). Bit-flag simplifies verification queries and reduces joins.",
         },
       ],
-      tradeoffs: "Bit-flag makes adding new permissions more rigid. Accepted given that the feature set is stable and small.",
-      implementation: ".NET 8 + EF Core + PostgreSQL. Tokens with SHA-256 + salt hash. JWT for authenticated sessions with permission claims. REST controllers with policy-based authorization.",
+      tradeoffs:
+        "Bit-flag makes adding new permissions more rigid. Accepted given that the feature set is stable and small.",
+      implementation:
+        ".NET 8 + EF Core + PostgreSQL. Tokens with SHA-256 + salt hash. JWT for authenticated sessions with permission claims. REST controllers with policy-based authorization.",
       learnings: [
         "Never store tokens in plain text — even activation tokens must be hashed",
         "Audit log in a separate table for each permission mutation is essential for support",

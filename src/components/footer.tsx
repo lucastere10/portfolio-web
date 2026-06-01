@@ -9,7 +9,9 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           {/* Left */}
           <div className="flex flex-col gap-1">
-            <span className="text-sm font-semibold text-foreground">Lucas Caldas</span>
+            <span className="text-sm font-semibold text-foreground">
+              Lucas Caldas
+            </span>
             <span className="text-xs text-muted-foreground">
               Software Engineer · AI &amp; Cloud · Rio de Janeiro, Brazil
             </span>

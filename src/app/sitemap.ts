@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: path === "/" ? 1 : 0.8,
-    })
+    }),
   );
 
   const projectSlugs = [
