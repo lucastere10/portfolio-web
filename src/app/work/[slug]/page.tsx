@@ -75,7 +75,9 @@ export default async function CaseStudyPage({ params }: Props) {
         <div className="flex flex-col gap-16">
           <section>
             <span className="section-label">Context</span>
-            <p className="mt-5 text-base text-foreground leading-relaxed">{resolved.context}</p>
+            <p className="mt-5 text-base text-foreground leading-relaxed">
+              {resolved.context}
+            </p>
           </section>
 
           <div className="border-t border-border" />
@@ -84,7 +86,10 @@ export default async function CaseStudyPage({ params }: Props) {
             <span className="section-label">Challenges</span>
             <ul className="mt-5 flex flex-col gap-3">
               {resolved.challenges.map((challenge, i) => (
-                <li key={i} className="flex gap-3 text-base text-muted-foreground leading-relaxed">
+                <li
+                  key={i}
+                  className="flex gap-3 text-base text-muted-foreground leading-relaxed"
+                >
                   <span className="text-mono text-xs text-muted-foreground/50 mt-1 shrink-0 w-5">
                     {String(i + 1).padStart(2, "0")}
                   </span>
@@ -106,9 +111,13 @@ export default async function CaseStudyPage({ params }: Props) {
                       className="w-1.5 h-1.5 rounded-full flex-shrink-0"
                       style={{ backgroundColor: "var(--gold)" }}
                     />
-                    <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+                    <h3 className="text-sm font-semibold text-foreground">
+                      {title}
+                    </h3>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed pl-4">{reasoning}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed pl-4">
+                    {reasoning}
+                  </p>
                 </div>
               ))}
             </div>
@@ -116,21 +125,27 @@ export default async function CaseStudyPage({ params }: Props) {
 
           <section>
             <span className="section-label">Trade-offs</span>
-            <p className="mt-5 text-base text-muted-foreground leading-relaxed">{resolved.tradeoffs}</p>
+            <p className="mt-5 text-base text-muted-foreground leading-relaxed">
+              {resolved.tradeoffs}
+            </p>
           </section>
 
           <div className="border-t border-border" />
 
           <section>
             <span className="section-label">Implementation</span>
-            <p className="mt-5 text-base text-muted-foreground leading-relaxed">{resolved.implementation}</p>
+            <p className="mt-5 text-base text-muted-foreground leading-relaxed">
+              {resolved.implementation}
+            </p>
           </section>
 
           <div className="border-t border-border" />
 
           <section>
             <span className="section-label">Impact</span>
-            <p className="mt-5 text-base text-foreground leading-relaxed font-medium">{resolved.impact}</p>
+            <p className="mt-5 text-base text-foreground leading-relaxed font-medium">
+              {resolved.impact}
+            </p>
           </section>
 
           <div className="border-t border-border" />
@@ -139,7 +154,10 @@ export default async function CaseStudyPage({ params }: Props) {
             <span className="section-label">Learnings</span>
             <ul className="mt-5 flex flex-col gap-3">
               {resolved.learnings.map((learning, i) => (
-                <li key={i} className="flex gap-3 text-base text-muted-foreground leading-relaxed">
+                <li
+                  key={i}
+                  className="flex gap-3 text-base text-muted-foreground leading-relaxed"
+                >
                   <span style={{ color: "var(--gold)" }} className="shrink-0">
                     ›
                   </span>
