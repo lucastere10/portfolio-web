@@ -416,6 +416,81 @@ html.dark {
     }
   }
 
+  /* ── Split overlay entrance ──────────────────────── */
+  .animate-split-in {
+    animation: split-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes split-in {
+    from {
+      opacity: 0;
+      transform: scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* ── Chat panel slide from left ──────────────────── */
+  .animate-chat-panel-in {
+    animation: chat-panel-in 0.52s cubic-bezier(0.16, 1, 0.3, 1) 80ms both;
+  }
+  @keyframes chat-panel-in {
+    from {
+      opacity: 0;
+      transform: translateX(-18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* ── Content panel slide from right ─────────────── */
+  .animate-content-panel-in {
+    animation: content-panel-in 0.52s cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+  }
+  @keyframes content-panel-in {
+    from {
+      opacity: 0;
+      transform: translateX(18px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* ── Individual chat message entry ──────────────── */
+  .animate-message-in {
+    animation: message-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes message-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ── Content panel card reveal ───────────────────── */
+  .content-panel-in {
+    animation: content-panel-card-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+  }
+  @keyframes content-panel-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-up,
     .hero-fade-0,
@@ -435,7 +510,12 @@ html.dark {
     .anim-flow-pulse,
     .anim-alert-flash,
     .anim-metric-pop,
-    .anim-fade-in-line {
+    .anim-fade-in-line,
+    .animate-split-in,
+    .animate-chat-panel-in,
+    .animate-content-panel-in,
+    .animate-message-in,
+    .content-panel-in {
       animation: none !important;
       transform: none !important;
     }
