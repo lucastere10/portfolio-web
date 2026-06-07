@@ -1,10 +1,12 @@
 substitutions:
-  _SERVICE_NAME: portfolio
-  _REGION: southamerica-east1
-  _AR_REGION: southamerica-east1
-  _AR_REPOSITORY: cloud-run
-  _IMAGE_NAME: portfolio
+  _SERVICE_NAME: portfolio-web
+  _REGION: us-central1
+  _AR_REGION: us-central1
+  _AR_REPOSITORY: portfolio-images
+  _IMAGE_NAME: portfolio-web
   _TAG: latest
+  _PORTFOLIO_AGENT_BASE_URL: https://portfolio-agent-399951936554.us-central1.run.app
+  _AGENT_REQUEST_TIMEOUT_MS: 30000
 
 steps:
   - id: Build image
@@ -33,6 +35,8 @@ steps:
       - --region
       - ${_REGION}
       - --platform
+      - --set-env-vars=PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}
+      - --set-env-vars=AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}
       - managed
       - --allow-unauthenticated
       - --port
