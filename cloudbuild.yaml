@@ -35,12 +35,12 @@ steps:
       - --region
       - ${_REGION}
       - --platform
-      - --set-env-vars=PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}
-      - --set-env-vars=AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}
       - managed
       - --allow-unauthenticated
       - --port
       - "8080"
+      - --set-env-vars=PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}
+      - --set-env-vars=AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}
 
 images:
   - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:${_TAG}
