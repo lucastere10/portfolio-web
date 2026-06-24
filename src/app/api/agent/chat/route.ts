@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getAgentRequestHeaders } from "@/lib/agent-auth";
+import { isAgentChatRequestAllowed } from "@/lib/agent-origin";
+import { isAgentChatRateLimited } from "@/lib/agent-rate-limit";
+
 // Allow this route up to 30 s on Vercel serverless (default is 10 s).
 export const maxDuration = 30;
 
@@ -11,6 +15,14 @@ const AGENT_TIMEOUT_MS = process.env.AGENT_REQUEST_TIMEOUT_MS
   : 30_000;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  if (!isAgentChatRequestAllowed(req)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  if (isAgentChatRateLimited(req)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   let body: unknown;
   try {
     body = await req.json();
@@ -41,7 +53,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const agentRes = await fetch(`${AGENT_BASE_URL}/api/v1/chat`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await getAgentRequestHeaders(AGENT_BASE_URL),
       body: JSON.stringify({ message, session_id }),
       signal: AbortSignal.timeout(AGENT_TIMEOUT_MS),
     });
