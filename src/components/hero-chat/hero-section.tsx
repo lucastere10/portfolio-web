@@ -41,20 +41,17 @@ export function HeroSection() {
   const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<UIChatMessage[]>([]);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      return localStorage.getItem(SESSION_KEY);
+    } catch {
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(false);
   const [agentResponse, setAgentResponse] = useState<AgentChatResponse | null>(null);
   const heroInputRef = useRef<HTMLInputElement>(null);
-
-  // Restore session from previous visit
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem(SESSION_KEY);
-      if (saved) setSessionId(saved);
-    } catch {
-      // localStorage not available
-    }
-  }, []);
 
   // Trap focus inside overlay when open
   useEffect(() => {

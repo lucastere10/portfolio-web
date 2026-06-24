@@ -1,5 +1,54 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Agent API (BFF)
+
+O browser nunca chama o agent diretamente. O chat usa `POST /api/agent/chat`, que:
+
+- Valida origem (`Origin`/`Referer`) em produção
+- Aplica rate limit leve (20 req/min por IP)
+- Envia ID token GCP ao agent em produção (`src/lib/agent-auth.ts`)
+
+### Variáveis de ambiente
+
+| Variável | Descrição | Default local |
+|----------|-----------|---------------|
+| `PORTFOLIO_AGENT_BASE_URL` | URL do portfolio-agent | `http://localhost:8000` |
+| `PORTFOLIO_WEB_BASE_URL` | Origem permitida no BFF | `http://localhost:3000` |
+| `AGENT_REQUEST_TIMEOUT_MS` | Timeout da chamada ao agent | `30000` |
+
+## Deploy (Cloud Run + Cloud Build)
+
+O pipeline em `cloudbuild.yaml`:
+
+1. Valida que o serviço `portfolio-agent` existe
+2. Build e push (tags `latest` e `$SHORT_SHA`)
+3. Deploy como `portfolio-web` com SA dedicada
+4. Smoke test: impersona `portfolio-web` e valida `GET /health` no agent
+
+### Setup único no GCP
+
+```bash
+# Service account (se ainda não criada — ver também portfolio-agent README)
+gcloud iam service-accounts create portfolio-web --display-name="Portfolio Web"
+
+# Permissão da Cloud Build SA para smoke tests
+PROJECT_NUMBER=$(gcloud projects describe PROJECT_ID --format='value(projectNumber)')
+gcloud iam service-accounts add-iam-policy-binding \
+  portfolio-web@PROJECT_ID.iam.gserviceaccount.com \
+  --member="serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \
+  --role="roles/iam.serviceAccountTokenCreator"
+```
+
+### Cloud Build Trigger (GitHub)
+
+1. Conecte `lucastere10/portfolio_web` em **Cloud Build → Repositories**
+2. Trigger `deploy-portfolio-web` na branch `^main$` → `cloudbuild.yaml`
+3. Deploy do **agent antes** do web quando ambos mudarem
+
+### CI no GitHub
+
+PRs e pushes em `main` rodam lint, typecheck e testes via `.github/workflows/ci.yml`. O deploy é disparado pelo Cloud Build Trigger (não pelo Actions).
+
 ## Getting Started
 
 First, run the development server:
