@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { postToAgent } from "@/lib/agent-auth";
+import { resolveAgentBaseUrl, resolveAgentTimeoutMs } from "@/lib/agent-config";
 import { isAgentChatRequestAllowed } from "@/lib/agent-origin";
 import { isAgentChatRateLimited } from "@/lib/agent-rate-limit";
 
 // Allow this route up to 30 s on Vercel serverless (default is 10 s).
 export const maxDuration = 30;
-
-const AGENT_BASE_URL =
-  process.env.PORTFOLIO_AGENT_BASE_URL ?? "http://localhost:8000";
-
-const AGENT_TIMEOUT_MS = process.env.AGENT_REQUEST_TIMEOUT_MS
-  ? parseInt(process.env.AGENT_REQUEST_TIMEOUT_MS, 10)
-  : 30_000;
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!isAgentChatRequestAllowed(req)) {
@@ -51,11 +45,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         : null;
 
   try {
+    const agentBaseUrl = resolveAgentBaseUrl();
     const agentRes = await postToAgent(
-      AGENT_BASE_URL,
+      agentBaseUrl,
       "/api/v1/chat",
       { message, session_id },
-      AGENT_TIMEOUT_MS
+      resolveAgentTimeoutMs()
     );
 
     if (!agentRes.ok) {
@@ -68,6 +63,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(agentRes.body);
   } catch (err) {
+    console.error("Agent chat proxy failed:", err);
     const isTimeout =
       err instanceof DOMException && err.name === "TimeoutError";
     return NextResponse.json(
