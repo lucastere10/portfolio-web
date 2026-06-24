@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getAgentRequestHeaders } from "@/lib/agent-auth";
+import { postToAgent } from "@/lib/agent-auth";
 import { isAgentChatRequestAllowed } from "@/lib/agent-origin";
 import { isAgentChatRateLimited } from "@/lib/agent-rate-limit";
 
@@ -51,27 +51,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         : null;
 
   try {
-    const agentRes = await fetch(`${AGENT_BASE_URL}/api/v1/chat`, {
-      method: "POST",
-      headers: await getAgentRequestHeaders(AGENT_BASE_URL),
-      body: JSON.stringify({ message, session_id }),
-      signal: AbortSignal.timeout(AGENT_TIMEOUT_MS),
-    });
+    const agentRes = await postToAgent(
+      AGENT_BASE_URL,
+      "/api/v1/chat",
+      { message, session_id },
+      AGENT_TIMEOUT_MS
+    );
 
     if (!agentRes.ok) {
-      let detail = "Agent returned an error";
-      try {
-        const errBody = (await agentRes.json()) as { error?: string; detail?: string };
-        detail = errBody.detail ?? errBody.error ?? detail;
-      } catch {
-        // ignore parse errors
-      }
+      const errBody = agentRes.body as { error?: string; detail?: string } | null;
+      const detail =
+        errBody?.detail ?? errBody?.error ?? "Agent returned an error";
       const status = agentRes.status >= 500 ? 502 : agentRes.status;
       return NextResponse.json({ error: detail }, { status });
     }
 
-    const data: unknown = await agentRes.json();
-    return NextResponse.json(data);
+    return NextResponse.json(agentRes.body);
   } catch (err) {
     const isTimeout =
       err instanceof DOMException && err.name === "TimeoutError";
