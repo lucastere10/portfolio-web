@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, ChevronDown, X, Send } from "lucide-react";
 import { AgentChatResponse, AgentProjectMatch, UIChatMessage } from "@/lib/agent-types";
+import { getPipelineStatusDisplay, useAgentHealth } from "@/hooks/use-agent-health";
 import { ChatPanel } from "./chat-panel";
 import { ContentPanel } from "./content-panel";
 import { domains } from "@/lib/portfolio-content";
@@ -52,6 +53,8 @@ export function HeroSection() {
   const [loading, setLoading] = useState(false);
   const [agentResponse, setAgentResponse] = useState<AgentChatResponse | null>(null);
   const heroInputRef = useRef<HTMLInputElement>(null);
+  const { status: agentHealthStatus } = useAgentHealth();
+  const pipelineStatus = getPipelineStatusDisplay(agentHealthStatus);
 
   // Trap focus inside overlay when open
   useEffect(() => {
@@ -149,7 +152,7 @@ export function HeroSection() {
     <>
       {/* ── Static hero section ─────────────────────────────────────────── */}
       <section
-        className="relative w-full min-h-dvh flex flex-col overflow-hidden"
+        className="relative w-full min-h-[calc(100dvh-var(--header-height))] flex flex-col overflow-hidden"
         style={{ background: "var(--hero-bg)" }}
       >
         <div
@@ -173,8 +176,8 @@ export function HeroSection() {
           style={{ background: "var(--hero-glow-2)" }}
         />
 
-        <div className="relative flex-1 content-width-wide mx-auto px-6 flex flex-col justify-center py-28">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+        <div className="relative flex-1 content-width-wide mx-auto px-6 flex flex-col justify-center py-12 lg:py-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* ── Left column ─────────────────────────────────────────────── */}
             <div className="flex flex-col gap-8">
               <div className="hero-fade-0 flex items-center gap-3">
@@ -277,8 +280,8 @@ export function HeroSection() {
                 >
                   <div className="flex items-center gap-2.5">
                     <span
-                      className="animate-pulse-dot inline-block w-2 h-2 rounded-full shrink-0"
-                      style={{ backgroundColor: "var(--status-green)" }}
+                      className={`inline-block w-2 h-2 rounded-full shrink-0${pipelineStatus.dotPulse ? " animate-pulse-dot" : ""}`}
+                      style={{ backgroundColor: pipelineStatus.dotColor }}
                     />
                     <span
                       className="text-mono text-xs tracking-[0.14em] uppercase"
@@ -290,12 +293,12 @@ export function HeroSection() {
                   <span
                     className="text-mono text-[10px] tracking-[0.12em] px-2.5 py-0.5 rounded-full uppercase border"
                     style={{
-                      color: "var(--status-green)",
-                      borderColor: "oklch(0.72 0.18 145 / 0.30)",
-                      backgroundColor: "oklch(0.72 0.18 145 / 0.10)",
+                      color: pipelineStatus.badgeColor,
+                      borderColor: pipelineStatus.badgeBorderColor,
+                      backgroundColor: pipelineStatus.badgeBackgroundColor,
                     }}
                   >
-                    ACTIVE
+                    {pipelineStatus.badgeLabel}
                   </span>
                 </div>
                 <div

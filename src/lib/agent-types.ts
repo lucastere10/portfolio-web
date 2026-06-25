@@ -20,3 +20,16 @@ export interface UIChatMessage {
   role: "user" | "assistant";
   content: string;
 }
+
+export type AgentHealthStatus =
+  | "ok"
+  | "starting"
+  | "degraded"
+  | "error"
+  | "unreachable";
+
+export interface AgentHealthResponse {
+  status: AgentHealthStatus;
+  llm_configured?: boolean;
+  version?: string;
+}
