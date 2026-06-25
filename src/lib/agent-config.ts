@@ -24,3 +24,13 @@ export function resolveAgentTimeoutMs(): number {
   const parsed = parseInt(raw, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 30_000;
 }
+
+export function resolveAgentHealthTimeoutMs(): number {
+  const raw = process.env.AGENT_HEALTH_TIMEOUT_MS;
+  if (!raw) {
+    return 8_000;
+  }
+
+  const parsed = parseInt(raw, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 8_000;
+}

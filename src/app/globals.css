@@ -59,26 +59,29 @@
   --gold-dim: oklch(0.72 0.145 75 / 0.14);
   --gold-border: oklch(0.72 0.145 75 / 0.3);
   --ring: oklch(0.72 0.145 75);
-  /* Hero — light mode palette */
-  --hero-bg: oklch(0.955 0.012 250);
-  --hero-panel: oklch(0.982 0.006 260 / 0.88);
-  --hero-border: oklch(0.812 0.02 255 / 0.65);
-  --hero-text: oklch(0.185 0.02 258);
-  --hero-muted: oklch(0.395 0.025 260);
-  --hero-grid-dot: oklch(0.35 0.03 260 / 0.2);
+  --header-height: 3.5rem;
+  /* Hero — light mode palette (aligned with site background, slightly darker) */
+  --hero-bg: oklch(0.972 0.005 85);
+  --hero-panel: oklch(0.982 0.004 85 / 0.88);
+  --hero-border: oklch(0.872 0.008 85 / 0.65);
+  --hero-text: oklch(0.1 0.008 85);
+  --hero-muted: oklch(0.47 0.012 85);
+  --hero-grid-dot: oklch(0.35 0.02 85 / 0.16);
   --hero-glow-1: radial-gradient(
     circle,
-    oklch(0.81 0.08 230 / 0.24) 0%,
+    oklch(0.72 0.145 75 / 0.12) 0%,
     transparent 70%
   );
   --hero-glow-2: radial-gradient(
     circle,
-    oklch(0.79 0.11 78 / 0.2) 0%,
+    oklch(0.93 0.005 85 / 0.35) 0%,
     transparent 70%
   );
-  --hero-chip-bg: oklch(0.95 0.008 250 / 0.64);
-  /* Status indicator green */
+  --hero-chip-bg: oklch(0.96 0.005 85 / 0.72);
+  /* Status indicator colors */
   --status-green: oklch(0.72 0.18 145);
+  --status-amber: oklch(0.72 0.145 75);
+  --status-offline: oklch(0.55 0.02 85);
   --radius: 0.5rem;
 }
 
@@ -102,24 +105,27 @@ html.dark {
   --border: oklch(0.22 0.025 265);
   --input: oklch(0.22 0.025 265);
   --ring: oklch(0.72 0.145 75);
-  /* Hero — dark mode palette */
-  --hero-bg: oklch(0.082 0.028 265);
+  /* Hero — dark mode palette (aligned with site background, slightly darker) */
+  --hero-bg: oklch(0.102 0.028 265);
   --hero-panel: oklch(0.115 0.028 265 / 0.88);
-  --hero-border: oklch(0.2 0.028 265);
+  --hero-border: oklch(0.22 0.025 265);
   --hero-text: oklch(0.93 0.005 85);
-  --hero-muted: oklch(0.67 0.018 265);
-  --hero-grid-dot: oklch(0.84 0.01 85 / 0.2);
+  --hero-muted: oklch(0.58 0.02 265);
+  --hero-grid-dot: oklch(0.84 0.01 85 / 0.14);
   --hero-glow-1: radial-gradient(
     circle,
-    oklch(0.5 0.15 250 / 0.2) 0%,
+    oklch(0.5 0.15 250 / 0.14) 0%,
     transparent 70%
   );
   --hero-glow-2: radial-gradient(
     circle,
-    oklch(0.72 0.145 75 / 0.16) 0%,
+    oklch(0.72 0.145 75 / 0.12) 0%,
     transparent 70%
   );
   --hero-chip-bg: oklch(0.135 0.028 265 / 0.72);
+  --status-green: oklch(0.72 0.18 145);
+  --status-amber: oklch(0.72 0.145 75);
+  --status-offline: oklch(0.58 0.02 265);
 }
 
 @layer base {

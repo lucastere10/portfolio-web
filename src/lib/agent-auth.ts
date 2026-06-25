@@ -28,11 +28,13 @@ function getIdTokenClient(audience: string): Promise<IdTokenClient> {
   return clientPromise;
 }
 
-export type AgentPostResult = {
+export type AgentRequestResult = {
   ok: boolean;
   status: number;
   body: unknown;
 };
+
+export type AgentPostResult = AgentRequestResult;
 
 /**
  * POST JSON to the portfolio-agent.
@@ -71,6 +73,50 @@ export async function postToAgent(
     method: "POST",
     data: payload,
     headers: { "Content-Type": "application/json" },
+    responseType: "json",
+    validateStatus: () => true,
+    timeout: timeoutMs,
+  });
+
+  return {
+    ok: response.status >= 200 && response.status < 300,
+    status: response.status,
+    body: response.data,
+  };
+}
+
+/**
+ * GET from the portfolio-agent (e.g. /health).
+ * In production, uses IdTokenClient.request() so Cloud Run receives a valid OIDC token.
+ */
+export async function getFromAgent(
+  agentBaseUrl: string,
+  path: string,
+  timeoutMs: number
+): Promise<AgentRequestResult> {
+  const base = normalizeAgentBaseUrl(agentBaseUrl);
+  const url = `${base}${path}`;
+
+  if (!agentBaseUrl || isLocalAgentUrl(agentBaseUrl)) {
+    const res = await fetch(url, {
+      method: "GET",
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+
+    let body: unknown = null;
+    try {
+      body = await res.json();
+    } catch {
+      // ignore parse errors
+    }
+
+    return { ok: res.ok, status: res.status, body };
+  }
+
+  const client = await getIdTokenClient(base);
+  const response = await client.request({
+    url,
+    method: "GET",
     responseType: "json",
     validateStatus: () => true,
     timeout: timeoutMs,
