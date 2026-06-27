@@ -76,12 +76,6 @@ export default function LabsPage() {
           </p>
           <div className="flex items-center gap-3">
             <Link
-              href="/labs/insights"
-              className="inline-flex items-center gap-2 text-sm font-medium text-foreground hover:opacity-70 transition-opacity"
-            >
-              Insights <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
               href="/contact"
               className="inline-flex items-center gap-2 text-sm font-medium text-foreground hover:opacity-70 transition-opacity"
             >

@@ -8,6 +8,7 @@ import { getPipelineStatusDisplay, useAgentHealth } from "@/hooks/use-agent-heal
 import { ChatPanel } from "./chat-panel";
 import { ContentPanel } from "./content-panel";
 import { domains } from "@/lib/portfolio-content";
+import { trackLabsEvent } from "@/lib/labs-analytics";
 
 const SESSION_KEY = "portfolio_agent_session_id";
 
@@ -53,6 +54,7 @@ export function HeroSection() {
   const [loading, setLoading] = useState(false);
   const [agentResponse, setAgentResponse] = useState<AgentChatResponse | null>(null);
   const heroInputRef = useRef<HTMLInputElement>(null);
+  const chatOpenedRef = useRef(false);
   const { status: agentHealthStatus } = useAgentHealth();
   const pipelineStatus = getPipelineStatusDisplay(agentHealthStatus);
 
@@ -66,10 +68,20 @@ export function HeroSection() {
     return () => document.removeEventListener("keydown", handler);
   }, [isOpen]);
 
+  // Track first chat open per session
+  useEffect(() => {
+    if (isOpen && !chatOpenedRef.current) {
+      chatOpenedRef.current = true;
+      trackLabsEvent({ labSlug: "hero-chat", action: "chat_opened" });
+    }
+  }, [isOpen]);
+
   const handleSubmit = useCallback(
     async (query: string) => {
       const trimmed = query.trim();
       if (!trimmed || loading) return;
+
+      trackLabsEvent({ labSlug: "hero-chat", action: "message_sent" });
 
       const userMsg: UIChatMessage = {
         id: `u-${Date.now()}`,

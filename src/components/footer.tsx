@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { trackLabsEvent } from "@/lib/labs-analytics";
 
 export function Footer() {
   return (
@@ -23,6 +24,13 @@ export function Footer() {
               href="https://github.com/lucastere10"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                trackLabsEvent({
+                  labSlug: "footer",
+                  action: "external_link",
+                  label: "github",
+                })
+              }
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               GitHub
@@ -31,12 +39,26 @@ export function Footer() {
               href="https://linkedin.com/in/lucas-caldas50"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() =>
+                trackLabsEvent({
+                  labSlug: "footer",
+                  action: "external_link",
+                  label: "linkedin",
+                })
+              }
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               LinkedIn
             </Link>
             <Link
               href="/contact"
+              onClick={() =>
+                trackLabsEvent({
+                  labSlug: "footer",
+                  action: "nav_click",
+                  label: "/contact",
+                })
+              }
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               Contact
