@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { trackLabsEvent } from "@/lib/labs-analytics";
 
 function GitHubIcon() {
   return (
@@ -62,6 +63,13 @@ export function Nav() {
                   <Link
                     key={href}
                     href={href}
+                    onClick={() =>
+                      trackLabsEvent({
+                        labSlug: "nav",
+                        action: "nav_click",
+                        label: href,
+                      })
+                    }
                     className={`relative text-sm transition-colors ${
                       active
                         ? "text-foreground font-medium"
@@ -86,6 +94,13 @@ export function Nav() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
+                onClick={() =>
+                  trackLabsEvent({
+                    labSlug: "nav",
+                    action: "external_link",
+                    label: "github",
+                  })
+                }
                 className="inline-flex h-9 w-9 items-center justify-center rounded border border-border text-muted-foreground transition-colors hover:text-foreground hover:border-foreground"
               >
                 <GitHubIcon />
@@ -95,6 +110,13 @@ export function Nav() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
+                onClick={() =>
+                  trackLabsEvent({
+                    labSlug: "nav",
+                    action: "external_link",
+                    label: "linkedin",
+                  })
+                }
                 className="inline-flex h-9 w-9 items-center justify-center rounded border border-border text-muted-foreground transition-colors hover:text-foreground hover:border-foreground"
               >
                 <LinkedInIcon />
