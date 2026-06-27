@@ -36,15 +36,15 @@ export function LabsInsightsPanel({ initialSnapshot }: LabsInsightsPanelProps) {
   }, []);
 
   const filtered = useMemo(() => {
-    const now = Date.now();
+    const windowEnd = new Date(snapshot.updatedAt).getTime();
     const activeWindow =
       PERIOD_OPTIONS.find((option) => option.value === period)?.windowMs ??
       PERIOD_OPTIONS[1].windowMs;
 
     return snapshot.events.filter(
-      (event) => now - new Date(event.at).getTime() <= activeWindow,
+      (event) => windowEnd - new Date(event.at).getTime() <= activeWindow,
     );
-  }, [period, snapshot.events]);
+  }, [period, snapshot.events, snapshot.updatedAt]);
 
   const filteredTopLabs = useMemo(() => aggregateByLab(filtered), [filtered]);
   const filteredTopActions = useMemo(
@@ -174,7 +174,7 @@ export function LabsInsightsPanel({ initialSnapshot }: LabsInsightsPanelProps) {
             <span className="text-foreground font-medium">GCP Cloud Logging</span>{" "}
             filtered by{" "}
             <code className="text-xs bg-muted px-1 py-0.5 rounded">
-              jsonPayload.event="lab_interaction"
+              {'jsonPayload.event="lab_interaction"'}
             </code>
             .
           </p>
