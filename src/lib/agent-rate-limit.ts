@@ -38,3 +38,7 @@ export function isAgentChatRateLimited(req: Request): boolean {
 export function isAnalyticsRateLimited(req: Request): boolean {
   return isRateLimited(req, "analytics", 120);
 }
+
+export function isContactRateLimited(req: Request): boolean {
+  return isRateLimited(req, "contact", 5);
+}

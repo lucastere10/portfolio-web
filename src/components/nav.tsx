@@ -32,6 +32,7 @@ function LinkedInIcon() {
 
 const links = [
   { href: "/work", label: "Work" },
+  { href: "/projects", label: "Projects" },
   { href: "/labs", label: "Labs" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },

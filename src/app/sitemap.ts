@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://lucas.dev"; // replace with real domain
 
-  const staticRoutes = ["/", "/work", "/labs", "/about", "/contact"].map(
+  const staticRoutes = ["/", "/work", "/projects", "/labs", "/about", "/contact"].map(
     (path) => ({
       url: `${base}${path}`,
       lastModified: new Date(),
