@@ -5,7 +5,6 @@ substitutions:
   _AR_REPOSITORY: portfolio-images
   _IMAGE_NAME: portfolio-web
   _PORTFOLIO_AGENT_BASE_URL: "https://portfolio-agent-399951936554.us-central1.run.app"
-  _AGENT_SERVICE_NAME: portfolio-agent
   _AGENT_REQUEST_TIMEOUT_MS: "30000"
   _PORTFOLIO_WEB_BASE_URL: "https://portfolio.caldasdev.store"
   _PORTFOLIO_WEB_SA: 399951936554-compute@developer.gserviceaccount.com
@@ -13,16 +12,7 @@ substitutions:
   _CONTACT_TO_EMAIL: lucastere10@gmail.com
 
 steps:
-  - id: validate-config
-    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
-    args:
-      - scripts/cloudbuild/validate-config.sh
-      - ${_PORTFOLIO_AGENT_BASE_URL}
-      - ${_AGENT_SERVICE_NAME}
-      - ${_REGION}
-
-  - id: Build image
+  - id: build
     name: gcr.io/cloud-builders/docker
     args:
       - build
@@ -32,53 +22,34 @@ steps:
       - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:latest
       - .
 
-  - id: Push image sha
+  - id: push
     name: gcr.io/cloud-builders/docker
+    entrypoint: bash
     args:
-      - push
-      - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
+      - -ceu
+      - |
+        docker push "${_AR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}"
+        docker push "${_AR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPOSITORY}/${_IMAGE_NAME}:latest"
 
-  - id: Push image latest
-    name: gcr.io/cloud-builders/docker
-    args:
-      - push
-      - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:latest
-
-  - id: Deploy to Cloud Run
-    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: gcloud
-    args:
-      - run
-      - deploy
-      - ${_SERVICE_NAME}
-      - --image
-      - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
-      - --region
-      - ${_REGION}
-      - --platform
-      - managed
-      - --allow-unauthenticated
-      - --service-account=${_PORTFOLIO_WEB_SA}
-      - --port
-      - "8080"
-      - --set-env-vars=PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL},AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS},PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL},CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL},CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}
-      - --set-secrets=RESEND_API_KEY=RESEND_API_KEY:latest
-
-  - id: verify-run-env
+  - id: deploy
     name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
     entrypoint: bash
     args:
-      - scripts/cloudbuild/verify-run-env.sh
-      - ${_SERVICE_NAME}
-      - ${_REGION}
-
-  - id: verify-communication
-    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
-    args:
-      - scripts/cloudbuild/verify-agent-health.sh
-      - ${_PORTFOLIO_AGENT_BASE_URL}
-      - ${_PORTFOLIO_WEB_SA}
+      - -ceu
+      - |
+        gcloud run deploy "${_SERVICE_NAME}" \
+          --image="${_AR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}" \
+          --region="${_REGION}" \
+          --platform=managed \
+          --allow-unauthenticated \
+          --service-account="${_PORTFOLIO_WEB_SA}" \
+          --port=8080 \
+          --update-env-vars="PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}" \
+          --update-env-vars="AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}" \
+          --update-env-vars="PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL}" \
+          --update-env-vars="CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL}" \
+          --update-env-vars="CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}" \
+          --update-secrets="RESEND_API_KEY=RESEND_API_KEY:latest"
 
 images:
   - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA

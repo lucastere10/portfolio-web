@@ -23,39 +23,28 @@ O browser nunca chama o agent diretamente. O chat usa `POST /api/agent/chat`, qu
 
 O pipeline em `cloudbuild.yaml`:
 
-1. Valida que o serviço `portfolio-agent` existe
-2. Build e push (tags `latest` e `$SHORT_SHA`)
-3. Deploy como `portfolio-web` com SA dedicada
-4. Smoke test: impersona `portfolio-web` e valida `GET /health` no agent
+1. Build da imagem Docker
+2. Push (`latest` e `$SHORT_SHA`)
+3. Deploy no Cloud Run com env vars e secret Resend
 
 ### Setup único no GCP
 
 ```bash
-# Service account (se ainda não criada — ver também portfolio-agent README)
-gcloud iam service-accounts create portfolio-web --display-name="Portfolio Web"
-
-# Permissão da Cloud Build SA para smoke tests
-PROJECT_NUMBER=$(gcloud projects describe PROJECT_ID --format='value(projectNumber)')
-gcloud iam service-accounts add-iam-policy-binding \
-  portfolio-web@PROJECT_ID.iam.gserviceaccount.com \
-  --member="serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \
-  --role="roles/iam.serviceAccountTokenCreator"
-
-# Formulário de contato (Resend) — secret + acesso da SA do Cloud Run
+# Formulário de contato (Resend)
 echo -n 're_YOUR_KEY' | gcloud secrets create RESEND_API_KEY --data-file=-
 
 gcloud secrets add-iam-policy-binding RESEND_API_KEY \
-  --member="serviceAccount:portfolio-web@PROJECT_ID.iam.gserviceaccount.com" \
+  --member="serviceAccount:399951936554-compute@developer.gserviceaccount.com" \
   --role="roles/secretmanager.secretAccessor"
 ```
 
-O deploy em `cloudbuild.yaml` injeta `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL` e monta `RESEND_API_KEY` via Secret Manager. **Importante:** use um único `--set-env-vars` no deploy — vários flags se substituem e só o último permanece.
+Substitutions do deploy (agent, contato, SA) ficam no topo de `cloudbuild.yaml`.
 
 ### Cloud Build Trigger (GitHub)
 
-1. Conecte `lucastere10/portfolio_web` em **Cloud Build → Repositories**
-2. Trigger `deploy-portfolio-web` na branch `^main$` → `cloudbuild.yaml`
-3. Deploy do **agent antes** do web quando ambos mudarem
+1. Conecte o repositório em **Cloud Build → Repositories**
+2. Trigger na branch `^main$` → **arquivo** `cloudbuild.yaml` do repositório (não use YAML inline)
+3. Remova substitutions conflitantes do template padrão (`_AR_REPOSITORY=cloud-run-source-deploy`, etc.)
 
 ### CI no GitHub
 
