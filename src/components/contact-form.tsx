@@ -1,11 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useState, type FormEvent } from "react";
 
-import { submitContactForm } from "@/app/contact/actions";
 import type { ContactFormState } from "@/lib/contact";
-
-const initialState: ContactFormState = { ok: false };
 
 const inputClassName =
   "w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring transition-shadow";
@@ -14,14 +11,49 @@ const labelClassName =
   "text-mono text-xs font-medium tracking-widest uppercase text-muted-foreground";
 
 export function ContactForm() {
-  const [state, formAction, pending] = useActionState(
-    submitContactForm,
-    initialState,
-  );
+  const [state, setState] = useState<ContactFormState>({ ok: false });
+  const [pending, setPending] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setState({ ok: false });
+
+    const form = event.currentTarget;
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        body: new FormData(form),
+      });
+      const data = (await res.json()) as ContactFormState;
+
+      if (data.ok) {
+        setState({ ok: true });
+        form.reset();
+      } else {
+        setState({
+          ok: false,
+          error: data.error ?? "Could not send your message.",
+          fieldErrors: data.fieldErrors,
+        });
+      }
+    } catch {
+      setState({
+        ok: false,
+        error: "Could not send your message. Please try again.",
+      });
+    } finally {
+      setPending(false);
+    }
+  }
 
   return (
-    <form action={formAction} className="flex flex-col gap-6 max-w-lg">
-      <div className="absolute -left-[9999px] h-0 w-0 overflow-hidden" aria-hidden="true">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-6 max-w-lg">
+      <div
+        className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
+        aria-hidden="true"
+      >
         <label htmlFor="company">Company</label>
         <input
           id="company"
