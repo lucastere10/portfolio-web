@@ -9,6 +9,8 @@ substitutions:
   _AGENT_REQUEST_TIMEOUT_MS: "30000"
   _PORTFOLIO_WEB_BASE_URL: "https://portfolio.caldasdev.store"
   _PORTFOLIO_WEB_SA: portfolio-web
+  _CONTACT_FROM_EMAIL: "Portfolio <contato@caldasdev.store>"
+  _CONTACT_TO_EMAIL: "lucastere10@gmail.com"
 
 steps:
   - id: validate-config
@@ -62,6 +64,9 @@ steps:
       - --set-env-vars=PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}
       - --set-env-vars=AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}
       - --set-env-vars=PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL}
+      - --set-env-vars=CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL}
+      - --set-env-vars=CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}
+      - --set-secrets=RESEND_API_KEY=RESEND_API_KEY:latest
 
   - id: verify-communication
     name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
