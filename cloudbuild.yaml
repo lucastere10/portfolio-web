@@ -8,7 +8,7 @@ substitutions:
   _AGENT_SERVICE_NAME: portfolio-agent
   _AGENT_REQUEST_TIMEOUT_MS: "30000"
   _PORTFOLIO_WEB_BASE_URL: "https://portfolio.caldasdev.store"
-  _PORTFOLIO_WEB_SA: portfolio-web
+  _PORTFOLIO_WEB_SA: 399951936554-compute@developer.gserviceaccount.com
   _CONTACT_FROM_EMAIL: contato@caldasdev.store
   _CONTACT_TO_EMAIL: lucastere10@gmail.com
 
@@ -58,7 +58,7 @@ steps:
       - --platform
       - managed
       - --allow-unauthenticated
-      - --service-account=${_PORTFOLIO_WEB_SA}@$PROJECT_ID.iam.gserviceaccount.com
+      - --service-account=${_PORTFOLIO_WEB_SA}
       - --port
       - "8080"
       - --set-env-vars=PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL},AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS},PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL},CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL},CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}
@@ -78,7 +78,7 @@ steps:
     args:
       - scripts/cloudbuild/verify-agent-health.sh
       - ${_PORTFOLIO_AGENT_BASE_URL}
-      - ${_PORTFOLIO_WEB_SA}@$PROJECT_ID.iam.gserviceaccount.com
+      - ${_PORTFOLIO_WEB_SA}
 
 images:
   - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
