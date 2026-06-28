@@ -69,7 +69,12 @@ export async function sendContactEmail(data: ContactPayload): Promise<void> {
   const to = process.env.CONTACT_TO_EMAIL;
 
   if (!apiKey || !from || !to) {
-    throw new Error("Contact email is not configured");
+    const missing = [
+      !apiKey && "RESEND_API_KEY",
+      !from && "CONTACT_FROM_EMAIL",
+      !to && "CONTACT_TO_EMAIL",
+    ].filter(Boolean);
+    throw new Error(`Contact email is not configured (missing: ${missing.join(", ")})`);
   }
 
   const resend = new Resend(apiKey);

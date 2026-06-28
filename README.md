@@ -15,6 +15,9 @@ O browser nunca chama o agent diretamente. O chat usa `POST /api/agent/chat`, qu
 | `PORTFOLIO_AGENT_BASE_URL` | URL do portfolio-agent | `http://localhost:8000` |
 | `PORTFOLIO_WEB_BASE_URL` | Origem permitida no BFF | `http://localhost:3000` |
 | `AGENT_REQUEST_TIMEOUT_MS` | Timeout da chamada ao agent | `30000` |
+| `RESEND_API_KEY` | Chave da API Resend (formulário de contato) | — |
+| `CONTACT_FROM_EMAIL` | Remetente verificado no Resend | — |
+| `CONTACT_TO_EMAIL` | Destino das mensagens do formulário | — |
 
 ## Deploy (Cloud Run + Cloud Build)
 
@@ -37,7 +40,16 @@ gcloud iam service-accounts add-iam-policy-binding \
   portfolio-web@PROJECT_ID.iam.gserviceaccount.com \
   --member="serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \
   --role="roles/iam.serviceAccountTokenCreator"
+
+# Formulário de contato (Resend) — secret + acesso da SA do Cloud Run
+echo -n 're_YOUR_KEY' | gcloud secrets create RESEND_API_KEY --data-file=-
+
+gcloud secrets add-iam-policy-binding RESEND_API_KEY \
+  --member="serviceAccount:portfolio-web@PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/secretmanager.secretAccessor"
 ```
+
+O deploy em `cloudbuild.yaml` injeta `CONTACT_FROM_EMAIL`, `CONTACT_TO_EMAIL` e monta `RESEND_API_KEY` via Secret Manager. **Importante:** use um único `--set-env-vars` no deploy — vários flags se substituem e só o último permanece.
 
 ### Cloud Build Trigger (GitHub)
 

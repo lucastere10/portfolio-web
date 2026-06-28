@@ -61,11 +61,8 @@ steps:
       - --service-account=${_PORTFOLIO_WEB_SA}@$PROJECT_ID.iam.gserviceaccount.com
       - --port
       - "8080"
-      - --set-env-vars=PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}
-      - --set-env-vars=AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}
-      - --set-env-vars=PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL}
-      - --set-env-vars=CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL}
-      - --set-env-vars=CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}
+      # Single --set-env-vars: each flag replaces ALL env vars (last one wins).
+      - --set-env-vars=^@^PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}@AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}@PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL}@CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL}@CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}
       - --set-secrets=RESEND_API_KEY=RESEND_API_KEY:latest
 
   - id: verify-communication
