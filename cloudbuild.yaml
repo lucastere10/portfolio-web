@@ -9,7 +9,7 @@ substitutions:
   _AGENT_REQUEST_TIMEOUT_MS: "30000"
   _PORTFOLIO_WEB_BASE_URL: "https://portfolio.caldasdev.store"
   _PORTFOLIO_WEB_SA: portfolio-web
-  _CONTACT_FROM_EMAIL: "Portfolio <contato@caldasdev.store>"
+  _CONTACT_FROM_EMAIL: contato@caldasdev.store
   _CONTACT_TO_EMAIL: "lucastere10@gmail.com"
 
 steps:
@@ -61,8 +61,7 @@ steps:
       - --service-account=${_PORTFOLIO_WEB_SA}@$PROJECT_ID.iam.gserviceaccount.com
       - --port
       - "8080"
-      # Single --set-env-vars: each flag replaces ALL env vars (last one wins).
-      - --set-env-vars=^@^PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}@AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}@PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL}@CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL}@CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}
+      - --set-env-vars=PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL},AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS},PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL},CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL},CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}
       - --set-secrets=RESEND_API_KEY=RESEND_API_KEY:latest
 
   - id: verify-communication
