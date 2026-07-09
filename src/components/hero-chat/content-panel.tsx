@@ -5,6 +5,8 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import { AgentChatResponse, AgentProjectMatch } from "@/lib/agent-types";
 import { resolveLocale, caseStudies } from "@/lib/projects";
 import { getLabBySlug } from "@/lib/labs";
+import { getPersonalProjectBySlug } from "@/lib/personal-projects";
+import { trackContentLinkClick } from "@/lib/labs-analytics";
 
 interface ContentPanelProps {
   response: AgentChatResponse | null;
@@ -13,7 +15,7 @@ interface ContentPanelProps {
 }
 
 interface NormalizedItem {
-  type: "project" | "lab";
+  type: "project" | "lab" | "personal_project";
   name: string;
   tagline: string;
   domain: string;
@@ -27,8 +29,24 @@ interface NormalizedItem {
 
 function getLocalData(
   id: string,
-  type: "project" | "lab"
+  type: "project" | "lab" | "personal_project"
 ): NormalizedItem | null {
+  if (type === "personal_project") {
+    const pp = getPersonalProjectBySlug(id);
+    if (!pp) return null;
+    return {
+      type: "personal_project",
+      name: pp.name,
+      tagline: pp.tagline,
+      domain: pp.domain,
+      stack: pp.stack,
+      context: pp.overview,
+      challenges: [],
+      metrics: (pp.metrics ?? []).slice(0, 4),
+      href: `/projects/${id}`,
+      slug: id,
+    };
+  }
   if (type === "project") {
     const cs = caseStudies.find((c) => c.slug === id);
     if (!cs) return null;
@@ -63,7 +81,10 @@ function getLocalData(
 }
 
 function getMatchDescription(match: AgentProjectMatch): string {
-  if (match.type === "project") {
+  if (match.type === "personal_project") {
+    const pp = getPersonalProjectBySlug(match.id);
+    if (pp) return pp.tagline;
+  } else if (match.type === "project") {
     const cs = caseStudies.find((c) => c.slug === match.id);
     if (cs) return resolveLocale(cs, "en").tagline;
   } else {
@@ -75,22 +96,39 @@ function getMatchDescription(match: AgentProjectMatch): string {
 
 // ── Sub-components ──────────────────────────────────────────────────────────
 
-function TypeTag({ type }: { type: "project" | "lab" }) {
-  const isProject = type === "project";
+function TypeTag({ type }: { type: "project" | "lab" | "personal_project" }) {
+  const styles =
+    type === "project"
+      ? {
+          color: "oklch(0.65 0.15 230)",
+          borderColor: "oklch(0.65 0.15 230 / 0.3)",
+          backgroundColor: "oklch(0.65 0.15 230 / 0.08)",
+          label: "project",
+        }
+      : type === "lab"
+        ? {
+            color: "oklch(0.72 0.18 145)",
+            borderColor: "oklch(0.72 0.18 145 / 0.3)",
+            backgroundColor: "oklch(0.72 0.18 145 / 0.08)",
+            label: "lab",
+          }
+        : {
+            color: "oklch(0.78 0.16 310)",
+            borderColor: "oklch(0.78 0.16 310 / 0.3)",
+            backgroundColor: "oklch(0.78 0.16 310 / 0.08)",
+            label: "personal",
+          };
+
   return (
     <span
       className="text-mono text-[9px] uppercase tracking-[0.14em] px-2 py-0.5 rounded-full border"
       style={{
-        color: isProject ? "oklch(0.65 0.15 230)" : "oklch(0.72 0.18 145)",
-        borderColor: isProject
-          ? "oklch(0.65 0.15 230 / 0.3)"
-          : "oklch(0.72 0.18 145 / 0.3)",
-        backgroundColor: isProject
-          ? "oklch(0.65 0.15 230 / 0.08)"
-          : "oklch(0.72 0.18 145 / 0.08)",
+        color: styles.color,
+        borderColor: styles.borderColor,
+        backgroundColor: styles.backgroundColor,
       }}
     >
-      {type}
+      {styles.label}
     </span>
   );
 }
@@ -119,6 +157,7 @@ function FeaturedCard({
           </div>
           <Link
             href={item.href}
+            onClick={() => trackContentLinkClick(item.href, item.slug)}
             className="shrink-0 p-1 rounded-md border transition-opacity hover:opacity-70"
             style={{
               borderColor: "var(--hero-border)",
@@ -153,10 +192,13 @@ function FeaturedCard({
   );
 }
 
-const FEATURED_SLUGS: Array<{ id: string; type: "project" | "lab" }> = [
-  { id: "ai-agents-adk", type: "project" },
-  { id: "payment-integration-platform", type: "project" },
-  { id: "gpos-payment-system", type: "project" },
+const FEATURED_SLUGS: Array<{
+  id: string;
+  type: "project" | "lab" | "personal_project";
+}> = [
+  { id: "drop", type: "personal_project" },
+  { id: "quark", type: "personal_project" },
+  { id: "passanota", type: "personal_project" },
 ];
 
 const DOMAIN_CHIPS = [
@@ -256,6 +298,7 @@ function MainItemCard({ item }: { item: NormalizedItem }) {
           </div>
           <Link
             href={item.href}
+            onClick={() => trackContentLinkClick(item.href, item.slug)}
             className="shrink-0 p-1.5 rounded-lg border transition-opacity hover:opacity-70"
             style={{
               borderColor: "var(--hero-border)",
@@ -380,10 +423,15 @@ function MainItemCard({ item }: { item: NormalizedItem }) {
         {/* CTA */}
         <Link
           href={item.href}
+          onClick={() => trackContentLinkClick(item.href, item.slug)}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-85"
           style={{ backgroundColor: "var(--gold)", color: "var(--hero-bg)" }}
         >
-          {item.type === "project" ? "Full case study" : "Open lab"}
+          {item.type === "project"
+            ? "Full case study"
+            : item.type === "personal_project"
+              ? "View project"
+              : "Open lab"}
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

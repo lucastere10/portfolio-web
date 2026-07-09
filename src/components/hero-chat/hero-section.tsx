@@ -8,7 +8,7 @@ import { getPipelineStatusDisplay, useAgentHealth } from "@/hooks/use-agent-heal
 import { ChatPanel } from "./chat-panel";
 import { ContentPanel } from "./content-panel";
 import { domains } from "@/lib/portfolio-content";
-import { trackLabsEvent } from "@/lib/labs-analytics";
+import { trackSiteInteraction } from "@/lib/labs-analytics";
 
 const SESSION_KEY = "portfolio_agent_session_id";
 
@@ -72,16 +72,20 @@ export function HeroSection() {
   useEffect(() => {
     if (isOpen && !chatOpenedRef.current) {
       chatOpenedRef.current = true;
-      trackLabsEvent({ labSlug: "hero-chat", action: "chat_opened" });
+      trackSiteInteraction("hero-chat", "chat_opened", {
+        session_id: sessionId ?? undefined,
+      });
     }
-  }, [isOpen]);
+  }, [isOpen, sessionId]);
 
   const handleSubmit = useCallback(
     async (query: string) => {
       const trimmed = query.trim();
       if (!trimmed || loading) return;
 
-      trackLabsEvent({ labSlug: "hero-chat", action: "message_sent" });
+      trackSiteInteraction("hero-chat", "message_sent", {
+        session_id: sessionId ?? undefined,
+      });
 
       const userMsg: UIChatMessage = {
         id: `u-${Date.now()}`,
@@ -110,7 +114,21 @@ export function HeroSection() {
         };
         setMessages((prev) => [...prev, agentMsg]);
         setAgentResponse(data);
+
+        trackSiteInteraction("hero-chat", "message_received", {
+          label: data.tool_used,
+          value: data.matches.length,
+          session_id: data.session_id,
+        });
       } catch (err) {
+        const errorLabel =
+          err instanceof Error ? err.message.slice(0, 64) : "unknown";
+
+        trackSiteInteraction("hero-chat", "chat_error", {
+          label: errorLabel,
+          session_id: sessionId ?? undefined,
+        });
+
         const errorText =
           err instanceof Error
             ? err.message === "Agent unavailable"
@@ -136,6 +154,13 @@ export function HeroSection() {
   const handleSelectMatch = useCallback(
     (match: AgentProjectMatch) => {
       if (!agentResponse) return;
+
+      trackSiteInteraction("hero-chat", "match_click", {
+        label: match.slug,
+        value: Math.round(match.score * 100),
+        session_id: agentResponse.session_id,
+      });
+
       setAgentResponse({
         ...agentResponse,
         selected_project: match.id,

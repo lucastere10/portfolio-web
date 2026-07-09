@@ -1,4 +1,7 @@
 import type { MetadataRoute } from "next";
+import { projects } from "@/lib/projects";
+import { personalProjects } from "@/lib/personal-projects";
+import { LABS } from "@/lib/labs";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://lucas.dev"; // replace with real domain
@@ -12,20 +15,26 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }),
   );
 
-  const projectSlugs = [
-    "agentic-rag-pipeline",
-    "mlops-platform",
-    "event-driven-architecture",
-    "data-pipeline-orchestration",
-    "integration-hub",
-  ];
-
-  const projectRoutes = projectSlugs.map((slug) => ({
-    url: `${base}/work/${slug}`,
+  const workRoutes = projects.map((p) => ({
+    url: `${base}/work/${p.slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...projectRoutes];
+  const personalRoutes = personalProjects.map((p) => ({
+    url: `${base}/projects/${p.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  const labRoutes = LABS.map((lab) => ({
+    url: `${base}/labs/${lab.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticRoutes, ...workRoutes, ...personalRoutes, ...labRoutes];
 }

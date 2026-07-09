@@ -174,7 +174,11 @@ export function LabsInsightsPanel({ initialSnapshot }: LabsInsightsPanelProps) {
             <span className="text-foreground font-medium">GCP Cloud Logging</span>{" "}
             filtered by{" "}
             <code className="text-xs bg-muted px-1 py-0.5 rounded">
-              {'jsonPayload.event="lab_interaction"'}
+              {'jsonPayload.event="site_interaction" OR jsonPayload.event="page_view"'}
+            </code>
+            . Export to BigQuery via{" "}
+            <code className="text-xs bg-muted px-1 py-0.5 rounded">
+              scripts/gcp/setup-analytics.sh
             </code>
             .
           </p>

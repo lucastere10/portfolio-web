@@ -1,59 +1,81 @@
 substitutions:
+  # Infra
+  _AR_HOSTNAME: us-central1-docker.pkg.dev
+  _DEPLOY_REGION: us-central1
+  _AR_REPO: portfolio-images
   _SERVICE_NAME: portfolio-web
-  _REGION: us-central1
-  _AR_REGION: us-central1
-  _AR_REPOSITORY: portfolio-images
-  _IMAGE_NAME: portfolio-web
+  _RUNTIME_SA: portfolio-web
+  _IMAGE: ${_AR_HOSTNAME}/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}
+  _CONCURRENCY: "15"
+  _LABEL_APP: portfolio
+  _LABEL_ENV: production
+  _LABEL_OWNER: lucas
+
+  # Secrets
+  _SECRET_RESEND_API_KEY: portfolio-resend-api-key
+
+  # Application
   _PORTFOLIO_AGENT_BASE_URL: "https://portfolio-agent-399951936554.us-central1.run.app"
   _AGENT_REQUEST_TIMEOUT_MS: "30000"
   _PORTFOLIO_WEB_BASE_URL: "https://portfolio.caldasdev.store"
-  _PORTFOLIO_WEB_SA: 399951936554-compute@developer.gserviceaccount.com
   _CONTACT_FROM_EMAIL: contato@caldasdev.store
   _CONTACT_TO_EMAIL: lucastere10@gmail.com
 
 steps:
-  - id: build
+  - id: Build
     name: gcr.io/cloud-builders/docker
     args:
       - build
       - -t
-      - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
+      - ${_IMAGE}:${COMMIT_SHA}
       - -t
-      - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:latest
+      - ${_IMAGE}:latest
       - .
 
-  - id: push
+  - id: Push
     name: gcr.io/cloud-builders/docker
     entrypoint: bash
     args:
       - -ceu
       - |
-        docker push "${_AR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}"
-        docker push "${_AR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPOSITORY}/${_IMAGE_NAME}:latest"
+        docker push "${_IMAGE}:${COMMIT_SHA}"
+        docker push "${_IMAGE}:latest"
 
-  - id: deploy
+  - id: Deploy
     name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
+    entrypoint: gcloud
     args:
-      - -ceu
-      - |
-        gcloud run deploy "${_SERVICE_NAME}" \
-          --image="${_AR_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPOSITORY}/${_IMAGE_NAME}:${SHORT_SHA}" \
-          --region="${_REGION}" \
-          --platform=managed \
-          --allow-unauthenticated \
-          --service-account="${_PORTFOLIO_WEB_SA}" \
-          --port=8080 \
-          --update-env-vars="PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}" \
-          --update-env-vars="AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}" \
-          --update-env-vars="PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL}" \
-          --update-env-vars="CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL}" \
-          --update-env-vars="CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}" \
-          --update-secrets="RESEND_API_KEY=RESEND_API_KEY:latest"
+      - run
+      - deploy
+      - ${_SERVICE_NAME}
+      - --image=${_IMAGE}:${COMMIT_SHA}
+      - --region=${_DEPLOY_REGION}
+      - --platform=managed
+      - --allow-unauthenticated
+      - --service-account=${_RUNTIME_SA}@${PROJECT_ID}.iam.gserviceaccount.com
+      - --port=8080
+      - --memory=1Gi
+      - --cpu=1
+      - --timeout=300
+      - --min-instances=0
+      - --max-instances=10
+      - --cpu-boost
+      - --concurrency=${_CONCURRENCY}
+      - --revision-suffix=${SHORT_SHA}
+      - --labels=app=${_LABEL_APP},env=${_LABEL_ENV},owner=${_LABEL_OWNER}
+      - --execution-environment=gen2
+      - --set-env-vars=PORTFOLIO_AGENT_BASE_URL=${_PORTFOLIO_AGENT_BASE_URL}
+      - --set-env-vars=AGENT_REQUEST_TIMEOUT_MS=${_AGENT_REQUEST_TIMEOUT_MS}
+      - --set-env-vars=PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL}
+      - --set-env-vars=CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL}
+      - --set-env-vars=CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}
+      - --set-secrets=RESEND_API_KEY=${_SECRET_RESEND_API_KEY}:latest
 
 images:
-  - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:$SHORT_SHA
-  - ${_AR_REGION}-docker.pkg.dev/$PROJECT_ID/${_AR_REPOSITORY}/${_IMAGE_NAME}:latest
+  - ${_IMAGE}:${COMMIT_SHA}
+  - ${_IMAGE}:latest
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
+serviceAccount: projects/${PROJECT_ID}/serviceAccounts/cloud-build-sa@${PROJECT_ID}.iam.gserviceaccount.com
