@@ -1,6 +1,6 @@
 export interface AgentProjectMatch {
   id: string;
-  type: "project" | "lab";
+  type: "project" | "lab" | "personal_project";
   title: string;
   score: number;
   slug: string;
@@ -9,7 +9,7 @@ export interface AgentProjectMatch {
 export interface AgentChatResponse {
   message: string;
   selected_project: string | null;
-  selected_type: "project" | "lab" | null;
+  selected_type: "project" | "lab" | "personal_project" | null;
   matches: AgentProjectMatch[];
   session_id: string;
   tool_used: string;
