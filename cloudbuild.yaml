@@ -69,7 +69,7 @@ steps:
       - --set-env-vars=PORTFOLIO_WEB_BASE_URL=${_PORTFOLIO_WEB_BASE_URL}
       - --set-env-vars=CONTACT_FROM_EMAIL=${_CONTACT_FROM_EMAIL}
       - --set-env-vars=CONTACT_TO_EMAIL=${_CONTACT_TO_EMAIL}
-      - --set-secrets=RESEND_API_KEY=${_SECRET_RESEND_API_KEY}:latest
+      - "--set-secrets=RESEND_API_KEY=${_SECRET_RESEND_API_KEY}:latest"
 
 images:
   - ${_IMAGE}:${COMMIT_SHA}
@@ -77,5 +77,6 @@ images:
 
 options:
   logging: CLOUD_LOGGING_ONLY
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
 
 serviceAccount: projects/${PROJECT_ID}/serviceAccounts/cloud-build-sa@${PROJECT_ID}.iam.gserviceaccount.com
