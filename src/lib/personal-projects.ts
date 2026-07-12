@@ -25,14 +25,14 @@ export interface PersonalProject {
 }
 
 const QUARK_DEMO_URL =
-  process.env.NEXT_PUBLIC_QUARK_DEMO_URL ?? "https://quark.caldasdev.store/";
+  process.env.NEXT_PUBLIC_QUARK_DEMO_URL ?? "https://quark.caldasdev.com.br/";
 
 const PASSANOTA_DEMO_URL =
   process.env.NEXT_PUBLIC_PASSANOTA_DEMO_URL ??
-  "https://passanota.caldasdev.store/";
+  "https://passanota.caldasdev.com.br/";
 
 const DROP_DEMO_URL =
-  process.env.NEXT_PUBLIC_DROP_DEMO_URL ?? "https://drop.caldasdev.store/";
+  process.env.NEXT_PUBLIC_DROP_DEMO_URL ?? "https://drop.caldasdev.com.br/";
 
 const NEWSLETTER_DEMO_URL =
   process.env.NEXT_PUBLIC_NEWSLETTER_DEMO_URL ?? "";

@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 
 const DEFAULT_ALLOWED_ORIGINS = [
-  "https://portfolio.caldasdev.store",
+  "https://portfolio.caldasdev.com.br",
   "http://localhost:3000",
   "https://localhost:3000",
 ];
