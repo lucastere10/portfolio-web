@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Cormorant_Garamond, Geist, Geist_Mono, Syne } from "next/font/google";
 import "./globals.css";
+import { PageViewTracker } from "@/components/analytics/page-view-tracker";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
@@ -61,6 +63,9 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Suspense fallback={null}>
+            <PageViewTracker />
+          </Suspense>
           <Nav />
           <main className="flex-1">{children}</main>
           <Footer />
