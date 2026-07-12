@@ -17,8 +17,8 @@ substitutions:
   # Application
   _PORTFOLIO_AGENT_BASE_URL: "https://portfolio-agent-399951936554.us-central1.run.app"
   _AGENT_REQUEST_TIMEOUT_MS: "30000"
-  _PORTFOLIO_WEB_BASE_URL: "https://portfolio.caldasdev.store"
-  _CONTACT_FROM_EMAIL: contato@caldasdev.store
+  _PORTFOLIO_WEB_BASE_URL: "https://portfolio.caldasdev.com.br"
+  _CONTACT_FROM_EMAIL: contato@caldasdev.com.br
   _CONTACT_TO_EMAIL: lucastere10@gmail.com
 
 steps:
