@@ -13,7 +13,7 @@ import {
 } from "@/components/labs/scenario-presets";
 import { SimulationConsole } from "@/components/labs/simulation-console";
 import { useLabAnalytics } from "@/components/labs/use-lab-analytics";
-import type { LabDefinition } from "@/lib/labs";
+import type { LabDefinition } from "@/content/schemas";
 
 const pipeline = [
   "Upload File",

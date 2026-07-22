@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { AgentHealthResponse, AgentHealthStatus } from "@/lib/agent-types";
+import type { AgentHealthResponse, AgentHealthStatus } from "@/lib/agent/types";
 
 const POLL_DELAYS_MS = [1_500, 2_000, 3_000, 3_000, 3_000, 3_000, 3_000, 3_000];
 const MAX_POLL_WINDOW_MS = 45_000;

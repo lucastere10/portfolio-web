@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { Send, Loader2 } from "lucide-react";
-import { UIChatMessage } from "@/lib/agent-types";
+import { UIChatMessage } from "@/lib/agent/types";
 
 interface ChatPanelProps {
   messages: UIChatMessage[];
@@ -10,50 +11,145 @@ interface ChatPanelProps {
   onSubmit: (query: string) => void;
 }
 
-function MessageContent({ content }: { content: string }) {
-  const pattern = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
-  const parts = content.split(pattern);
+const LINK_CLASS =
+  "underline underline-offset-2 hover:opacity-80 break-all";
 
+function ChatLink({ href, children }: { href: string; children: ReactNode }) {
+  const external = /^https?:\/\//i.test(href);
   return (
-    <>
-      {parts.map((part, i) => {
-        if (part.startsWith("**") && part.endsWith("**")) {
-          return <strong key={i}>{part.slice(2, -2)}</strong>;
-        }
-
-        const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-        if (linkMatch) {
-          return (
-            <a
-              key={i}
-              href={linkMatch[2]}
-              className="underline underline-offset-2 hover:opacity-80"
-              style={{ color: "var(--gold)" }}
-            >
-              {linkMatch[1]}
-            </a>
-          );
-        }
-
-        return <span key={i}>{part}</span>;
-      })}
-    </>
+    <a
+      href={href}
+      className={LINK_CLASS}
+      style={{ color: "var(--gold)" }}
+      {...(external
+        ? { target: "_blank", rel: "noopener noreferrer" }
+        : {})}
+    >
+      {children}
+    </a>
   );
+}
+
+/** Inline: **bold**, *italic*, [text](url), bare https:// and /site paths */
+function renderInline(text: string, keyPrefix: string): ReactNode[] {
+  const pattern =
+    /(\*\*[^*]+\*\*|\*[^*]+\*|_[^_]+_|\[[^\]]+\]\([^)]+\)|https?:\/\/[^\s<>\]]+|\/(?:en\/)?(?:contact|about|work|projects|labs)(?:\/[^\s)\].,;:!?]*)?)/g;
+  const parts = text.split(pattern);
+
+  return parts.map((part, i) => {
+    const key = `${keyPrefix}-${i}`;
+    if (!part) return null;
+
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      return <strong key={key}>{part.slice(2, -2)}</strong>;
+    }
+    if (
+      ((part.startsWith("*") && part.endsWith("*")) ||
+        (part.startsWith("_") && part.endsWith("_"))) &&
+      part.length > 2 &&
+      !part.startsWith("**")
+    ) {
+      return <em key={key}>{part.slice(1, -1)}</em>;
+    }
+
+    const mdLink = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (mdLink) {
+      return (
+        <ChatLink key={key} href={mdLink[2]}>
+          {mdLink[1]}
+        </ChatLink>
+      );
+    }
+
+    if (/^https?:\/\//i.test(part)) {
+      return (
+        <ChatLink key={key} href={part}>
+          {part}
+        </ChatLink>
+      );
+    }
+
+    if (
+      /^\/(?:en\/)?(?:contact|about|work|projects|labs)(?:\/[^\s)\].,;!?]*)?$/.test(
+        part,
+      )
+    ) {
+      return (
+        <ChatLink key={key} href={part}>
+          {part}
+        </ChatLink>
+      );
+    }
+
+    return <span key={key}>{part}</span>;
+  });
+}
+
+function MessageContent({ content }: { content: string }) {
+  const lines = content.split("\n");
+  const blocks: ReactNode[] = [];
+  let listItems: string[] = [];
+  let blockKey = 0;
+
+  function flushList() {
+    if (listItems.length === 0) return;
+    const items = listItems;
+    listItems = [];
+    blocks.push(
+      <ul key={`ul-${blockKey++}`} className="list-disc pl-4 my-1 space-y-0.5">
+        {items.map((item, i) => (
+          <li key={i}>{renderInline(item, `li-${blockKey}-${i}`)}</li>
+        ))}
+      </ul>,
+    );
+  }
+
+  for (const line of lines) {
+    const bullet = line.match(/^\s*[-*]\s+(.+)$/);
+    if (bullet) {
+      listItems.push(bullet[1]);
+      continue;
+    }
+    flushList();
+    if (line.trim() === "") {
+      blocks.push(<div key={`br-${blockKey++}`} className="h-2" />);
+      continue;
+    }
+    blocks.push(
+      <p key={`p-${blockKey++}`} className="my-0.5">
+        {renderInline(line, `p-${blockKey}`)}
+      </p>,
+    );
+  }
+  flushList();
+
+  return <div className="space-y-0.5">{blocks}</div>;
 }
 
 export function ChatPanel({ messages, loading, onSubmit }: ChatPanelProps) {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const wasLoading = useRef(false);
+  const t = useTranslations("hero");
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
+
+  useEffect(() => {
+    if (wasLoading.current && !loading) {
+      inputRef.current?.focus();
+    }
+    wasLoading.current = loading;
+  }, [loading]);
 
   function handleSubmit() {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
     onSubmit(trimmed);
     setInput("");
+    requestAnimationFrame(() => inputRef.current?.focus());
   }
 
   return (
@@ -82,7 +178,7 @@ export function ChatPanel({ messages, loading, onSubmit }: ChatPanelProps) {
       <div
         className="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-3"
         aria-live="polite"
-        aria-label="Chat messages"
+        aria-label={t("ariaMessages")}
       >
         {messages.length === 0 && (
           <div className="flex-1 flex items-center justify-center">
@@ -183,6 +279,7 @@ export function ChatPanel({ messages, loading, onSubmit }: ChatPanelProps) {
           }}
         >
           <input
+            ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -192,18 +289,17 @@ export function ChatPanel({ messages, loading, onSubmit }: ChatPanelProps) {
                 handleSubmit();
               }
             }}
-            placeholder="Ask a follow-up question..."
+            placeholder={t("followUpPlaceholder")}
             className="flex-1 bg-transparent text-sm focus:outline-none"
             style={{ color: "var(--hero-text)" }}
-            disabled={loading}
-            aria-label="Follow-up message input"
+            aria-label={t("ariaFollowUp")}
           />
           <button
             onClick={handleSubmit}
             disabled={loading || !input.trim()}
             className="shrink-0 p-1 rounded-lg transition-opacity disabled:opacity-30 hover:opacity-75"
             style={{ color: "var(--gold)" }}
-            aria-label="Send message"
+            aria-label={t("ariaSend")}
           >
             <Send className="w-4 h-4" />
           </button>

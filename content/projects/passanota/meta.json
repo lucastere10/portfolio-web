@@ -1,0 +1,32 @@
+{
+  "slug": "passanota",
+  "domain": "FinTech / Expense Management",
+  "stack": [
+    "Next.js 16",
+    "React 19",
+    "TypeScript",
+    "Tailwind CSS 4",
+    "Supabase Auth",
+    "shadcn/ui",
+    "Recharts",
+    "FastAPI",
+    "Python 3.13",
+    "PostgreSQL",
+    "pgvector",
+    "OpenCV",
+    "Cloud Run",
+    "Cloud Tasks"
+  ],
+  "status": "live",
+  "featured": true,
+  "order": 2,
+  "links": {
+    "demo": "https://passanota.caldasdev.com.br/",
+    "github": "https://github.com/lucastere10/passanota-web",
+    "repo": "https://github.com/lucastere10/passanota-api"
+  },
+  "heroVisual": {
+    "accent": "#14b8a6",
+    "background": "linear-gradient(135deg, #0a0f0e 0%, #0f1a18 50%, #0a0f0e 100%)"
+  }
+}

@@ -1,0 +1,20 @@
+---
+name: Sistema de Licenciamento de Serviços
+tagline: Ativação por token, gestão de permissões e CRUDs administrativos
+impact: Sistema de licenciamento com ativação por token, controle de permissões granular e painel administrativo completo.
+context: O produto precisava controlar acesso a funcionalidades por plano de licença, com ativação auto-serviço e gestão administrativa centralizada.
+challenges:
+  - Modelar permissões granulares por funcionalidade sem explodir a complexidade do schema
+  - Fluxo de ativação por token com expiração e invalidação única
+  - Painel administrativo com CRUDs completos sem framework de admin pré-fabricado
+decisions:
+  - title: Tokens de ativação de uso único
+    reasoning: Tokens gerados no ato da venda, hasheados no banco, válidos por N dias. Após uso são marcados como consumidos. Evita reuso e é simples de auditar.
+  - title: Permissões bit-flag em vez de tabela de junction
+    reasoning: Volume de permissões é fixo e pequeno (<64). Bit-flag simplifica queries de verificação e reduz joins.
+tradeoffs: Bit-flag torna a adição de novas permissões mais rígida. Aceito dado que o conjunto de funcionalidades é estável e pequeno.
+implementation: .NET 8 + EF Core + PostgreSQL. Tokens com hash SHA-256 + salt. JWT para sessões autenticadas com claims de permissão. Controllers REST com autorização baseada em policy.
+learnings:
+  - Nunca armazenar token em texto plano — mesmo tokens de ativação devem ser hasheados
+  - Audit log em tabela separada para cada mutação de permissão é imprescindível para suporte
+---

@@ -1,26 +1,25 @@
 "use client";
 
-import Link from "next/link";
-import { trackLabsEvent } from "@/lib/labs-analytics";
+import { useTranslations } from "next-intl";
+import { trackLabsEvent } from "@/lib/analytics/labs-analytics";
+import { Link } from "@/i18n/navigation";
 
 export function Footer() {
+  const t = useTranslations("footer");
+
   return (
     <footer className="border-t border-border">
       <div className="content-width-wide px-6 py-10">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          {/* Left */}
           <div className="flex flex-col gap-1">
             <span className="text-sm font-semibold text-foreground">
-              Lucas Caldas
+              {t("name")}
             </span>
-            <span className="text-xs text-muted-foreground">
-              Software Engineer · AI &amp; Cloud · Rio de Janeiro, Brazil
-            </span>
+            <span className="text-xs text-muted-foreground">{t("tagline")}</span>
           </div>
 
-          {/* Links */}
           <div className="flex items-center gap-6">
-            <Link
+            <a
               href="https://github.com/lucastere10"
               target="_blank"
               rel="noopener noreferrer"
@@ -33,9 +32,9 @@ export function Footer() {
               }
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              GitHub
-            </Link>
-            <Link
+              {t("github")}
+            </a>
+            <a
               href="https://linkedin.com/in/lucas-caldas50"
               target="_blank"
               rel="noopener noreferrer"
@@ -48,8 +47,8 @@ export function Footer() {
               }
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              LinkedIn
-            </Link>
+              {t("linkedin")}
+            </a>
             <Link
               href="/contact"
               onClick={() =>
@@ -61,7 +60,7 @@ export function Footer() {
               }
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              Contact
+              {t("contact")}
             </Link>
           </div>
         </div>

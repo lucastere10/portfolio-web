@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { trackLabsEvent } from "@/lib/labs-analytics";
+import { trackLabsEvent } from "@/lib/analytics/labs-analytics";
 
 type LabViewTrackerProps = {
   labSlug: string;

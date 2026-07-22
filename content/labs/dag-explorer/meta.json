@@ -1,0 +1,11 @@
+{
+  "slug": "dag-explorer",
+  "domain": "MLOps & Data Pipelines",
+  "tags": [
+    "airflow-inspired",
+    "dag",
+    "orchestration"
+  ],
+  "order": 7,
+  "demoKey": "dag-explorer"
+}

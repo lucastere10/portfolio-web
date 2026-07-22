@@ -1,4 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio — Lucas Caldas
+
+Site pessoal (case studies, projetos, labs interativos e chat com agent) em Next.js App Router, com conteúdo em MDX e i18n (`pt-BR` / `en`).
+
+## Stack
+
+- Next.js 16 (App Router), React 19, TypeScript, Tailwind
+- **next-intl** — routing e UI strings (`messages/*.json`)
+- Conteúdo editorial — MDX em `content/{work,projects,labs,pages}/`
+- Loaders — `src/content/*` (Zod + gray-matter, `server-only`)
+- Chat — browser → `POST /api/agent/chat` (BFF) → [portfolio-agent](../portfolio-agent) (nunca chamar o agent direto do browser)
+- Contato — Resend via `POST /api/contact`
+
+## Internacionalização
+
+| Locale | Prefixo | Exemplo |
+|--------|---------|---------|
+| `pt-BR` (default) | nenhum | `/work/ai-agents-adk` |
+| `en` | `/en` | `/en/work/ai-agents-adk` |
+
+- UI chrome: `messages/pt-BR.json` + `messages/en.json`
+- Editorial: `content/<tipo>/<slug>/{pt-BR,en}.mdx` (+ `meta.json` para work/projects/labs)
+- Validação dual-locale: `pnpm validate:locales` (roda no `prebuild`)
+- Detalhes: [`docs/architecture-roadmap.md`](docs/architecture-roadmap.md) · [`AGENTS.md`](AGENTS.md)
+
+## Como adicionar conteúdo
+
+### Work / project
+
+1. Criar `content/work/<slug>/` ou `content/projects/<slug>/`
+2. `meta.json` + `pt-BR.mdx` + `en.mdx` (ambos obrigatórios)
+3. `pnpm validate:locales` · `pnpm build`
+4. Abrir `/work/<slug>` e `/en/work/<slug>` (ou `/projects/...`)
+
+### Lab
+
+1. `content/labs/<slug>/meta.json` com `demoKey`
+2. MDX nos dois locales
+3. Componente em `src/components/labs/demos/`
+4. Registrar em `LAB_DEMO_REGISTRY`
+
+## Scripts
+
+```bash
+pnpm dev                 # desenvolvimento
+pnpm build               # validate:locales + next build
+pnpm validate:locales    # dual MDX + parity de messages
+pnpm typecheck
+pnpm test
+```
 
 ## Agent API (BFF)
 
@@ -6,18 +55,19 @@ O browser nunca chama o agent diretamente. O chat usa `POST /api/agent/chat`, qu
 
 - Valida origem (`Origin`/`Referer`) em produção
 - Aplica rate limit leve (20 req/min por IP)
-- Envia ID token GCP ao agent em produção (`src/lib/agent-auth.ts`)
+- Envia ID token GCP ao agent em produção (`src/lib/agent/auth.ts`)
 
 ### Variáveis de ambiente
 
 | Variável | Descrição | Default local |
 |----------|-----------|---------------|
 | `PORTFOLIO_AGENT_BASE_URL` | URL do portfolio-agent | `http://localhost:8000` |
-| `PORTFOLIO_WEB_BASE_URL` | Origem permitida no BFF | `http://localhost:3000` |
+| `PORTFOLIO_WEB_BASE_URL` | Origem permitida no BFF / URL canônica | `http://localhost:3000` |
 | `AGENT_REQUEST_TIMEOUT_MS` | Timeout da chamada ao agent | `30000` |
 | `RESEND_API_KEY` | Chave da API Resend (formulário de contato) | — |
 | `CONTACT_FROM_EMAIL` | Remetente verificado no Resend | — |
 | `CONTACT_TO_EMAIL` | Destino das mensagens do formulário | — |
+| `INSIGHTS_ACCESS_TOKEN` | Token para `/labs/insights?token=` (obrigatório em produção) | — |
 
 ## Deploy (Cloud Run + Cloud Build)
 
@@ -49,38 +99,3 @@ Substitutions do deploy (agent, contato, SA) ficam no topo de `cloudbuild.yaml`.
 ### CI no GitHub
 
 PRs e pushes em `main` rodam lint, typecheck e testes via `.github/workflows/ci.yml`. O deploy é disparado pelo Cloud Build Trigger (não pelo Actions).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

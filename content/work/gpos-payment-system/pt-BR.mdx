@@ -1,0 +1,31 @@
+---
+name: Sistema de Pagamento GPOS
+tagline: "Backend .NET/C# para PIX e cartões com autenticação mTLS"
+impact: "Sistema completo de pagamentos em .NET/C# com PIX, cartões, mTLS e registro remoto de terminais — eliminando o envio físico de dispositivos."
+context: O produto GPOS precisava de um backend robusto para processar pagamentos via PIX e cartões, com autenticação mútua entre terminais e servidor, e registro remoto de novos dispositivos.
+challenges:
+  - Implementar mTLS para autenticação mútua entre terminais físicos e o servidor
+  - Garantir conformidade com as regras do BACEN para transações PIX
+  - Eliminar o processo manual de envio físico de dispositivos para registro
+  - Manter consistência transacional em cenários de conexão instável nos terminais
+decisions:
+  - title: mTLS para autenticação bilateral terminal-servidor
+    reasoning: Terminais físicos não podem depender de credenciais rotacionáveis por usuário. Certificados cliente instalados no terminal garantem identidade do dispositivo sem intervenção humana.
+  - title: Registro remoto de terminais
+    reasoning: O processo anterior exigia envio físico do dispositivo para configuração. O novo fluxo permite registro via API autenticada durante o onboarding, reduzindo custo logístico significativamente.
+  - title: .NET como runtime principal
+    reasoning: Stack já estabelecida na empresa com bibliotecas maduras para PIX (BACEN SPI) e integrações com bandeiras de cartão via ISO 8583.
+tradeoffs: mTLS adiciona complexidade na gestão do ciclo de vida de certificados (expiração, revoção). Foi necessário implementar um processo de renovação automática antes do vencimento.
+implementation: .NET 8 com ASP.NET Core, configuração de Kestrel para mTLS com validação de CA privada. PIX implementado seguindo especificação BACEN SPI. Registro de terminais via endpoint autenticado com múltiplos fatores de verificação.
+learnings:
+  - Documentação do BACEN para PIX é extensa mas precisa — seguir à risca evita rejeitações na integração
+  - Implementar circuit breaker nas chamadas ao PSP evita cascata de falhas em indisponibilidade do banco
+  - Logs de transação imutáveis são obrigatórios para auditoria — não use UPDATE em registros de pagamento
+metrics:
+  - label: Métodos de pagamento
+    value: PIX + Cartões
+  - label: Autenticação
+    value: mTLS
+  - label: Registro de terminais
+    value: "100% remoto"
+---

@@ -1,0 +1,12 @@
+{
+  "slug": "retry-failure-simulator",
+  "domain": "CI/CD",
+  "tags": [
+    "payments",
+    "queue",
+    "sre",
+    "incident-response"
+  ],
+  "order": 1,
+  "demoKey": "retry-failure-simulator"
+}

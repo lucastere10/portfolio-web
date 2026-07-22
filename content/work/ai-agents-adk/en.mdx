@@ -1,0 +1,31 @@
+---
+name: AI Agents with ADK
+tagline: Intelligent agents integrated into the GCP ecosystem via MCP Toolbox
+impact: Autonomous agents integrating Jira, Looker, and BigQuery via MCP Toolbox, deployed on Cloud Run with Vertex AI.
+context: The team needed intelligent agents that could autonomously query business data in Jira, Looker, and BigQuery, without directly exposing internal APIs to the model.
+challenges:
+  - Orchestrating multiple tools (Jira, Looker, BigQuery) reliably without the agent entering loops
+  - Ensuring secure access to sensitive data via MCP Toolbox in the GCP environment
+  - Managing context and memory in long conversations without exceeding token limits
+  - Deploying to Cloud Run with acceptable cold start times for interactive use
+decisions:
+  - title: ADK + MCP Toolbox as the integration layer
+    reasoning: "Google's ADK (Agent Development Kit) offers native abstractions for orchestrating agents in the Vertex AI ecosystem. MCP Toolbox allows exposing business tools in a standardized way without direct model coupling."
+  - title: Cloud Run for serverless deployment
+    reasoning: Scales to zero for infrequent invocations, native integration with Vertex AI and GCP IAM, no infrastructure management overhead.
+  - title: BigQuery as the primary analytical data source
+    reasoning: Eliminates the need for a separate cache layer — the agent queries BigQuery directly via generated SQL, with paginated results to fit within context.
+tradeoffs: MCP Toolbox adds an indirection layer that increases latency by ~200ms per tool call. Acceptable for conversational use cases, but not for high-frequency pipelines.
+implementation: Each agent is a Cloud Run service with tool configuration in YAML. MCP Toolbox manages authentication and API exposure for Jira and Looker. The Python orchestrator uses ADK to decide which tool to invoke based on conversation context.
+learnings:
+  - Describing tools with concrete examples of when NOT to use them reduces unnecessary calls by ~40%
+  - Separating agents by domain (data vs. project vs. report) is more robust than a generic agent with many tools
+  - Structured logs of each agent decision are essential for debugging in production
+metrics:
+  - label: Integrated tools
+    value: "3"
+  - label: Avg latency per turn
+    value: "~1.8s"
+  - label: Deployment platform
+    value: Cloud Run / GCP
+---

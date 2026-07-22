@@ -1,8 +1,13 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTranslations } from "next-intl";
 
-import type { ContactFormState } from "@/lib/contact";
+import type {
+  ContactErrorCode,
+  ContactFieldErrorCode,
+  ContactFormState,
+} from "@/lib/contact";
 
 const inputClassName =
   "w-full rounded-md border border-border bg-background px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-ring transition-shadow";
@@ -10,9 +15,34 @@ const inputClassName =
 const labelClassName =
   "text-mono text-xs font-medium tracking-widest uppercase text-muted-foreground";
 
+const FIELD_ERROR_KEYS: Record<ContactFieldErrorCode, string> = {
+  name_required: "errorNameRequired",
+  email_required: "errorEmailRequired",
+  email_invalid: "errorEmailInvalid",
+};
+
+const ERROR_KEYS: Record<ContactErrorCode, string> = {
+  validation_failed: "errorValidation",
+  rate_limited: "errorRateLimited",
+  invalid_form: "errorInvalidForm",
+  send_failed: "errorRetry",
+};
+
 export function ContactForm() {
+  const t = useTranslations("contactForm");
   const [state, setState] = useState<ContactFormState>({ ok: false });
   const [pending, setPending] = useState(false);
+
+  function mapError(code?: string): string {
+    if (!code) return t("errorGeneric");
+    const key = ERROR_KEYS[code as ContactErrorCode];
+    return key ? t(key) : t("errorGeneric");
+  }
+
+  function mapFieldError(code?: ContactFieldErrorCode): string | undefined {
+    if (!code) return undefined;
+    return t(FIELD_ERROR_KEYS[code]);
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -34,14 +64,14 @@ export function ContactForm() {
       } else {
         setState({
           ok: false,
-          error: data.error ?? "Could not send your message.",
+          error: data.error,
           fieldErrors: data.fieldErrors,
         });
       }
     } catch {
       setState({
         ok: false,
-        error: "Could not send your message. Please try again.",
+        error: "send_failed",
       });
     } finally {
       setPending(false);
@@ -70,7 +100,7 @@ export function ContactForm() {
           aria-live="polite"
           className="rounded-md border border-border bg-muted/40 px-4 py-3 text-sm text-foreground"
         >
-          Thanks! Your message was sent. I&apos;ll get back to you soon.
+          {t("success")}
         </p>
       )}
 
@@ -80,13 +110,13 @@ export function ContactForm() {
           aria-live="polite"
           className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
         >
-          {state.error}
+          {mapError(state.error)}
         </p>
       )}
 
       <div className="flex flex-col gap-2">
         <label htmlFor="name" className={labelClassName}>
-          Name
+          {t("name")}
         </label>
         <input
           id="name"
@@ -95,21 +125,21 @@ export function ContactForm() {
           required
           autoComplete="name"
           maxLength={100}
-          placeholder="Your name"
+          placeholder={t("namePlaceholder")}
           aria-invalid={Boolean(state.fieldErrors?.name)}
           aria-describedby={state.fieldErrors?.name ? "name-error" : undefined}
           className={inputClassName}
         />
         {state.fieldErrors?.name && (
           <p id="name-error" className="text-xs text-destructive">
-            {state.fieldErrors.name}
+            {mapFieldError(state.fieldErrors.name)}
           </p>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
         <label htmlFor="email" className={labelClassName}>
-          Email
+          {t("email")}
         </label>
         <input
           id="email"
@@ -118,7 +148,7 @@ export function ContactForm() {
           required
           autoComplete="email"
           maxLength={254}
-          placeholder="you@company.com"
+          placeholder={t("emailPlaceholder")}
           aria-invalid={Boolean(state.fieldErrors?.email)}
           aria-describedby={
             state.fieldErrors?.email ? "email-error" : undefined
@@ -127,21 +157,21 @@ export function ContactForm() {
         />
         {state.fieldErrors?.email && (
           <p id="email-error" className="text-xs text-destructive">
-            {state.fieldErrors.email}
+            {mapFieldError(state.fieldErrors.email)}
           </p>
         )}
       </div>
 
       <div className="flex flex-col gap-2">
         <label htmlFor="context" className={labelClassName}>
-          Project context
+          {t("context")}
         </label>
         <textarea
           id="context"
           name="context"
           rows={5}
           maxLength={5000}
-          placeholder="Describe what you are building, what kind of help you need, and any relevant constraints."
+          placeholder={t("contextPlaceholder")}
           className={`${inputClassName} resize-none`}
         />
       </div>
@@ -151,7 +181,7 @@ export function ContactForm() {
         disabled={pending}
         className="inline-flex items-center justify-center bg-foreground text-background text-sm font-medium px-5 py-2.5 rounded-md hover:opacity-80 transition-opacity w-fit cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {pending ? "Sending…" : "Send message"}
+        {pending ? t("sending") : t("submit")}
       </button>
     </form>
   );

@@ -1,15 +1,18 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
+import { getTranslations } from "next-intl/server";
 import { LabViewTracker } from "@/components/labs/lab-view-tracker";
-import type { LabDefinition } from "@/lib/labs";
+import type { LabDefinition } from "@/content/schemas";
 
 type LabShellProps = {
   lab: LabDefinition;
   children: ReactNode;
 };
 
-export function LabShell({ lab, children }: LabShellProps) {
+export async function LabShell({ lab, children }: LabShellProps) {
+  const t = await getTranslations("labs");
+
   return (
     <div className="px-6 py-16 content-width-wide">
       <LabViewTracker labSlug={lab.slug} />
@@ -24,14 +27,14 @@ export function LabShell({ lab, children }: LabShellProps) {
               {lab.summary}
             </p>
             <p className="text-xs text-muted-foreground mt-4 text-mono tracking-wide uppercase">
-              Prompt: {lab.interactionPrompt}
+              {t("prompt")}: {lab.interactionPrompt}
             </p>
           </div>
           <Link
             href="/labs"
             className="inline-flex items-center gap-2 text-sm font-medium text-foreground hover:opacity-70 transition-opacity shrink-0"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Labs
+            <ArrowLeft className="w-4 h-4" /> {t("back")}
           </Link>
         </div>
 
@@ -41,9 +44,7 @@ export function LabShell({ lab, children }: LabShellProps) {
           </div>
           <aside className="rounded-xl border border-border bg-background/90 p-5 flex flex-col gap-6 sticky top-20">
             <div>
-              <h2 className="text-sm font-semibold mb-3">
-                What this demonstrates
-              </h2>
+              <h2 className="text-sm font-semibold mb-3">{t("demonstrates")}</h2>
               <ul className="flex flex-wrap gap-2">
                 {lab.demonstrates.map((item) => (
                   <li
@@ -56,7 +57,7 @@ export function LabShell({ lab, children }: LabShellProps) {
               </ul>
             </div>
             <div>
-              <h2 className="text-sm font-semibold mb-3">Narrative flow</h2>
+              <h2 className="text-sm font-semibold mb-3">{t("narrative")}</h2>
               <ol className="flex flex-col gap-3">
                 {lab.narrative.map((line, index) => (
                   <li
@@ -73,14 +74,13 @@ export function LabShell({ lab, children }: LabShellProps) {
             </div>
             <div className="pt-1 border-t border-border">
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Built as an interactive mock to communicate technical depth
-                through system behavior, not static diagrams.
+                {t("asideNote")}
               </p>
               <Link
                 href="/contact"
                 className="inline-flex items-center gap-1 text-sm font-medium mt-3 hover:opacity-75 transition-opacity"
               >
-                Request walkthrough <ArrowRight className="w-4 h-4" />
+                {t("walkthrough")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </aside>

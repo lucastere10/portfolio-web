@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { refreshAnalyticsSnapshot } from "@/app/labs/insights/actions";
-import type { LabsAnalyticsEvent, LabsAnalyticsSnapshot } from "@/lib/labs-analytics";
+import { refreshAnalyticsSnapshot } from "@/lib/analytics/insights-actions";
+import type { LabsAnalyticsEvent, LabsAnalyticsSnapshot } from "@/lib/analytics/labs-analytics";
 
 type PeriodFilter = "1h" | "24h" | "7d";
 
@@ -18,9 +18,13 @@ const PERIOD_OPTIONS: Array<{
 
 interface LabsInsightsPanelProps {
   initialSnapshot: LabsAnalyticsSnapshot;
+  accessToken: string;
 }
 
-export function LabsInsightsPanel({ initialSnapshot }: LabsInsightsPanelProps) {
+export function LabsInsightsPanel({
+  initialSnapshot,
+  accessToken,
+}: LabsInsightsPanelProps) {
   const [snapshot, setSnapshot] = useState(initialSnapshot);
   const [loading, setLoading] = useState(false);
   const [period, setPeriod] = useState<PeriodFilter>("24h");
@@ -28,12 +32,12 @@ export function LabsInsightsPanel({ initialSnapshot }: LabsInsightsPanelProps) {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await refreshAnalyticsSnapshot();
+      const data = await refreshAnalyticsSnapshot(accessToken);
       setSnapshot(data);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [accessToken]);
 
   const filtered = useMemo(() => {
     const windowEnd = new Date(snapshot.updatedAt).getTime();

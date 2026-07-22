@@ -223,8 +223,8 @@ Add a **date range** control bound to `timestamp` on each page. Optional: filter
 
 ## Code references
 
-- Client tracking: `src/lib/labs-analytics.ts`
-- Server log helper: `src/lib/structured-log.ts`
+- Client tracking: `src/lib/analytics/labs-analytics.ts`
+- Server log helper: `src/lib/analytics/structured-log.ts`
 - Analytics API: `src/app/api/analytics/route.ts`
 - Chat BFF logging: `src/app/api/agent/chat/route.ts`
 - Agent logging: `portfolio-agent/src/observability/logging.py`

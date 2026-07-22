@@ -1,0 +1,31 @@
+---
+name: Plataforma de Integração de Pagamentos
+tagline: "Stripe event-driven: checkout, assinaturas e gestão de ciclo de vida"
+impact: Integração completa com Stripe — webhooks, checkout automático, gestão de assinaturas e recuperação de pagamentos falhos.
+context: O produto precisava suportar pagamentos recorrentes com múltiplos planos, upgrades/downgrades em tempo real e recuperação automática de inadimplência.
+challenges:
+  - Garantir idempotência no processamento de webhooks Stripe (eventos podem chegar duplicados)
+  - Sincronizar estado de assinatura entre Stripe e o banco de dados local sem inconsistência
+  - Gerenciar transições de plano (upgrade/downgrade) com pró-rata correto
+  - Recuperar pagamentos falhos com retry inteligente sem spam ao cliente
+decisions:
+  - title: Event-driven via webhooks com idempotência
+    reasoning: Cada evento Stripe é processado exatamente uma vez usando o event ID como chave de idempotência no banco. Garante consistência mesmo com retentativas do Stripe.
+  - title: Estado local como fonte de verdade para a aplicação
+    reasoning: A aplicação mantém seu próprio modelo de assinatura sincronizado via webhooks. Isso permite consultas rápidas sem dependência de latência da API Stripe.
+  - title: Checkout Session vs. Payment Intent
+    reasoning: Checkout Session para fluxos novos (UI hospedada pelo Stripe, menor surface de PCI). Payment Intent apenas para renovações automáticas já autorizadas.
+tradeoffs: Manter estado local duplicado requer reconciliação periódica com a API Stripe para detectar deriva. Um job diário de reconciliação foi suficiente para o volume atual.
+implementation: FastAPI recebe webhooks Stripe com verificação de assinatura HMAC. Cada tipo de evento tem um handler dedicado. Estado de assinatura salvo em PostgreSQL com enum de status (active, past_due, canceled, trialing).
+learnings:
+  - Testar webhooks localmente com Stripe CLI antes de produzir economiza horas de debugging
+  - Logar o payload completo do evento (truncado) facilita auditoria de disputas de pagamento
+  - Implementar webhook delivery log permite reprocessar eventos manualmente quando necessário
+metrics:
+  - label: Tipos de evento tratados
+    value: "12"
+  - label: Taxa de sucesso no checkout
+    value: ">98%"
+  - label: Recuperação de inadimplência
+    value: Automática
+---

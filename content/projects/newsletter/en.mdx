@@ -1,0 +1,36 @@
+---
+name: "KnowledgeHub"
+tagline: "Personalized AI & technology intelligence, delivered weekly."
+overview: "KnowledgeHub is a personalized technology intelligence platform — not simply a newsletter. A Python collector worker continuously ingests articles from curated RSS sources and scrapers, enriches them with AI (summaries, topics, keywords, embeddings, quality scores), and stores them in a shared PostgreSQL database. A composite recommendation engine ranks content per user from topic weights, engagement, freshness, and diversity — without relying solely on LLM prompts. Users receive beautifully formatted, tracked weekly editions via email."
+highlights:
+  - "Python collector worker decoupled from Next.js, sharing a Prisma-managed PostgreSQL schema"
+  - "5-signal composite recommendation engine (quality, affinity, engagement, freshness, diversity) with Redis caching"
+  - "Offline-capable ingestion pipeline with OpenAI enrichment and heuristic fallbacks when keys are absent"
+  - "Full admin dashboard for sources, articles, worker runs, newsletters, and analytics"
+features:
+  - "SaaS marketing landing with sample newsletter preview and onboarding flow"
+  - "Magic-link authentication and weighted topic preferences across 11 categories"
+  - "RSS and scraper collection with AI enrichment, embeddings, and global quality scoring"
+  - "Personalized newsletter generation with HTML rendering and click/open tracking"
+  - "Composite ranking with greedy diversity selection and 5-minute Redis cache TTL"
+  - "Admin console — users, news sources, articles, newsletter editions, worker executions"
+  - "Domain-driven modules with typed domain events for future ML and search features"
+  - "Docker Compose local stack with PostgreSQL 16 and Redis 7"
+  - "Graceful degradation — Redis, OpenAI, and Resend are optional for local development"
+  - "Turborepo monorepo with shared scoring primitives across TypeScript and Python"
+technicalNotes: "Built as a Turborepo monorepo: `apps/web` (Next.js 16 App Router with domain modules for auth, preferences, recommendation, newsletter, analytics, admin), `workers/collector` (Python feedparser + BeautifulSoup pipeline writing via SQLAlchemy to the same Prisma schema), and packages for database, shared scoring/topics/events, and shadcn/ui. The recommendation engine blends five weighted signals in TypeScript; the collector enriches and embeds offline when OpenAI is unavailable. Email delivery uses Resend with open-pixel and click tracking feeding engagement signals back into ranking."
+metrics:
+  - label: "Workspaces"
+    value: "7"
+  - label: "Topic categories"
+    value: "11"
+  - label: "RSS sources"
+    value: "5 seeded"
+  - label: "Ranking signals"
+    value: "5"
+learnings:
+  - "Composite scoring beats prompt-only personalization for explainability, cost control, and tunable ranking"
+  - "Optional Redis, OpenAI, and Resend degrade gracefully — the full stack runs locally without external services"
+  - "Shared scoring primitives in `@workspace/shared` keep the web app and Python worker conceptually aligned"
+heroLabel: "Intelligence Pipeline"
+---

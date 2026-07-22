@@ -1,0 +1,13 @@
+{
+  "slug": "payment-integration-platform",
+  "domain": "Payment Systems",
+  "stack": [
+    "Python",
+    "Stripe",
+    "Webhooks",
+    "PostgreSQL",
+    "FastAPI"
+  ],
+  "featured": true,
+  "order": 2
+}
