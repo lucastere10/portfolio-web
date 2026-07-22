@@ -1,0 +1,26 @@
+---
+name: Workspace de Delivery com IA
+tagline: Workspace de metodologia de delivery com geração assistida de documentos
+impact: SPA que operacionaliza a metodologia de delivery — projetos, iterações, artefatos versionados e pipelines assíncronos de documentos com IA, geração ciente de dependências e edição no browser.
+context: O time precisava de um workspace para executar a metodologia de delivery de ponta a ponta — gerir projetos e iterações, coletar artefatos de entrada, gerar PRDs e entregáveis derivados com assistência de IA, acompanhar status de aprovação e editar ou comparar versões sem sair do browser.
+challenges:
+  - Orquestrar geração longa de documentos sem travar a UI
+  - Impor ordem de dependência entre tipos de documento para a qualidade da geração não degradar
+  - Suportar edição rica no browser e compare de versões para markdown e backlogs estruturados
+  - Autenticar uma SPA pública em um IdP OIDC enquanto chama APIs BaaS e webhooks de automação
+decisions:
+  - title: BaaS para CRUD e storage de arquivos, plataforma de automação para geração com IA
+    reasoning: Edge functions e object storage cuidam de projetos, iterações e arquivos de artefato. A geração envia payloads tipados a webhooks de automação que leem do storage e gravam o resultado — SPA magra e pipelines trocáveis.
+  - title: Matriz de dependência de artefatos antes de gerar
+    reasoning: Artefatos derivados exigem documentos upstream validados. Uma matriz tipada bloqueia a geração até as referências existirem, melhorando qualidade e reduzindo runs desperdiçados.
+  - title: Editores TipTap e diff Myers para compare de versões
+    reasoning: TipTap cobre edição markdown/HTML com sanitização de paste; um diff Myers/LCS customizado alimenta o compare lado a lado em documentos grandes sem empilhar uma lib pesada de terceiros.
+  - title: UX de geração assíncrona com polling
+    reasoning: Workflows longos não retornam de forma síncrona. Um contexto de geração com polling atualiza status dos artefatos até conclusão ou falha.
+tradeoffs: Acoplamento a workflows externos de automação significa que mudanças de pipeline podem quebrar o contrato da SPA — mitigado com payloads tipados e bases de webhook por ambiente. Polling é mais simples que websockets, mas gera ruído de requests em jobs longos. Embutir client secret OIDC na SPA é um cheiro de segurança; a conveniência do password grant troca por um modelo de public client mais fraco, que deveria migrar para um fluxo OIDC público adequado.
+implementation: SPA React/Vite com rotas protegidas, tabelas de projetos, workspace de ideação, upload drag-drop para object storage, editores TipTap e de backlog hierárquico, compare de versões e CI/CD multi-env servido por nginx com health probes.
+learnings:
+  - Referências upstream validadas melhoram materialmente a qualidade dos documentos gerados versus gerar só a partir de uploads brutos
+  - Aliases legados de tipos são necessários quando slugs de artefato evoluem em deploys parciais
+  - Contaminação de paste vindas de boundaries de formulário precisa ser removida antes do documento entrar no editor
+---

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { hasLocale } from "next-intl";
@@ -41,23 +42,39 @@ export default async function AboutPage({ params }: Props) {
         <p className="text-mono text-xs tracking-widest uppercase text-muted-foreground mb-4">
           {t("eyebrow")}
         </p>
-        <h1 className="font-display font-bold text-4xl tracking-tight mb-10">
-          {page.title}
-        </h1>
 
-        <div className="flex flex-col gap-5 max-w-[38rem] mb-20">
-          {page.intro.map((paragraph, index) => (
-            <p
-              key={paragraph.slice(0, 32)}
-              className={
-                index === 0
-                  ? "text-base text-foreground leading-relaxed"
-                  : "text-base text-muted-foreground leading-relaxed"
-              }
-            >
-              {paragraph}
-            </p>
-          ))}
+        <div className="flex flex-col md:flex-row gap-10 md:gap-14 mb-20 items-start">
+          <div className="shrink-0 w-40 sm:w-48 md:w-56">
+            <Image
+              src="/images/lucas-caldas-picture.jpg"
+              alt="Lucas Caldas"
+              width={448}
+              height={560}
+              priority
+              className="w-full aspect-[4/5] object-cover object-top"
+            />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <h1 className="font-display font-bold text-4xl tracking-tight mb-8">
+              {page.title}
+            </h1>
+
+            <div className="flex flex-col gap-5 max-w-[38rem]">
+              {page.intro.map((paragraph, index) => (
+                <p
+                  key={paragraph.slice(0, 32)}
+                  className={
+                    index === 0
+                      ? "text-base text-foreground leading-relaxed"
+                      : "text-base text-muted-foreground leading-relaxed"
+                  }
+                >
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="border-t border-border mb-16" />

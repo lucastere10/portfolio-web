@@ -1,0 +1,16 @@
+{
+  "slug": "ai-delivery-workspace",
+  "domain": "AI Agents",
+  "stack": [
+    "TypeScript",
+    "React",
+    "Vite",
+    "TipTap",
+    "Supabase",
+    "Keycloak",
+    "n8n",
+    "Tailwind"
+  ],
+  "featured": false,
+  "order": 8
+}
