@@ -261,7 +261,7 @@ export function HeroSection({
                   {t("headline2")}
                 </h1>
                 <p
-                  className="text-mono text-[11px] leading-none tracking-[0.16em] uppercase"
+                  className="text-mono text-[18px] leading-none tracking-[0.16em] uppercase"
                   style={{ color: "var(--hero-muted)" }}
                 >
                   Lucas Caldas

@@ -1,0 +1,26 @@
+---
+name: Plataforma de Diarização de Orçamento
+tagline: Orçamento comercial mensal dividido em linhas diárias loja×categoria com calibração auditada
+impact: Substituiu um ciclo mensal de planejamento baseado em planilhas por um wizard guiado que valida entradas, aplica pesos históricos, preserva totais mensais na calibração e exporta arquivos versionados no formato do data warehouse.
+context: O time precisava automatizar o planejamento mensal de orçamento comercial multi-loja — transformar totais mensais em valores diários por loja e categoria com fidelidade às convenções do warehouse, em vez de fluxos frágeis em planilha.
+challenges:
+  - Garantir identidades contábeis e convenções de sinal de deduções alinhadas ao warehouse
+  - Derivar pesos diários a partir de receita histórica quando há dias de loja fechada ou histórico ausente
+  - Permitir calibração manual sem quebrar totais mensais de receita bruta e lucro
+  - Manter fronteira estrita de dual-database — histórico read-only no warehouse vs. persistência da app para exports versionados
+decisions:
+  - title: Diarização por shares históricos com fallback uniforme
+    reasoning: Os pesos diários vêm da receita bruta histórica por loja×categoria. Sem histórico, shares uniformes desbloqueiam o ciclo; dias fechados disparam renormalização para os totais mensais fecharem.
+  - title: Strategies plugáveis de calendário de referência
+    reasoning: O mapeamento padrão usa um offset fixo de dias que preserva o dia da semana. Uma strategy alternativa mapeia a N-ésima ocorrência do weekday no ano anterior. Um registry mantém UI e rematerialização trocáveis sem reescrever o motor de shares.
+  - title: Calibração com locks, rateio proporcional e audit log
+    reasoning: Planejadores ajustam campos selecionados em escopo de linha, dia ou loja-dia. Linhas travadas ficam fora do rateio; campos complementares são redistribuídos para manter invariantes mensais. Cada mudança guarda justificativa e snapshots para undo.
+  - title: Persistência de export versionado em chunks
+    reasoning: Exports grandes no formato do warehouse são gravados em passos begin/append/finalize para evitar limites de tamanho em proxies, com abort em falha e flag de versão corrente para rehidratar o histórico.
+tradeoffs: A qualidade da saída depende da cobertura do histórico no warehouse — histórico ralo cai no fallback uniforme e exige mais calibração. O wizard em múltiplos passos é mais pesado que uma planilha única, mas gates de validação crítica e auditabilidade compensam o atrito.
+implementation: App full-stack TypeScript (TanStack Start) com wizard em Zustand — upload, validação, mapeamento de referência, diarização, calibração, feriados, export e histórico. Server functions consultam SQL Server para shares históricos e MySQL para exports versionados via migrations dbmate. Imagem Docker publicada em Kubernetes por pipeline de CI.
+learnings:
+  - Convenções de sinal de impostos e deduções de custo no warehouse precisam ser normalizadas no ingest, senão checks de identidade geram falso positivo
+  - Dias de loja fechada exigem renormalização de shares; sem isso as linhas diárias subpreenchem o total mensal
+  - Persistência em chunks é necessária quando o payload de export estoura o body limit do reverse proxy — abort do draft evita versões parciais órfãs
+---

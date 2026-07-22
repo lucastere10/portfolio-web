@@ -1,0 +1,35 @@
+---
+name: "Astra"
+tagline: "Inteligência personalizada em IA e tecnologia, no Daily ou no Weekly."
+overview: "A Astra ranqueia o sinal de tecnologia conforme seus interesses e entrega como newsletter personalizada — inteligência primeiro, inbox depois. Um coletor em Python ingere continuamente artigos de RSS curados, scrapers e fontes Exa opcionais, enriquece com IA (resumos, tópicos, keywords, embeddings, scores de qualidade) e remove quase-duplicatas. Um motor de recomendação composto ranqueia por afinidade de tópico, engajamento, frescor, diversidade e qualidade global — sem depender só de prompts LLM. Usuários recebem digests Astra Daily ou Weekly via Resend, com tracking de abertura/clique alimentando o ranking."
+highlights:
+  - "Coletor Python desacoplado do Next.js, compartilhando schema PostgreSQL Prisma/Supabase via SQLAlchemy"
+  - "Ranking composto com 5 sinais (qualidade, afinidade, engajamento, frescor, diversidade) e cache Redis opcional"
+  - "Pipeline: collect → enrich → embed → dedup → score → deliver (cadências Daily/Weekly)"
+  - "Produção no GCP Cloud Run — astra-web, astra-collect, astra-deliver — com Cloud Scheduler"
+features:
+  - "Landing SaaS com preview de newsletter, how-it-works e onboarding"
+  - "Auth por magic link e preferências de tópicos ponderadas em 11 categorias"
+  - "Coleta RSS, scraper e Exa opcional com enriquecimento de IA e fallbacks heurísticos"
+  - "Deduplicação por embeddings com fallback de URL/título"
+  - "Digests personalizados (Astra Daily / Astra Weekly) com HTML e tracking de engajamento"
+  - "Console admin para fontes, artigos, runs do worker, newsletters e analytics"
+  - "Módulos de domínio para auth, preferências, recomendação, newsletter, analytics e unsubscribe"
+  - "Monorepo Turborepo com primitivas de scoring e branding compartilhadas entre TypeScript e Python"
+  - "Degradação graciosa — Redis, OpenAI, Exa e Resend opcionais no desenvolvimento local"
+technicalNotes: "Monorepo Turborepo: `apps/web` (Next.js 16 App Router), `workers/collector` (Python feedparser + BeautifulSoup + OpenAI via SQLAlchemy no schema Prisma) e packages de database, scoring/topics/branding e shadcn/ui. O ranking combina cinco sinais ponderados em TypeScript; o coletor enriquece e embute offline quando OpenAI não está disponível. Em produção, três serviços Cloud Run com Cloud Scheduler disparam collect e deliver."
+metrics:
+  - label: "Serviços Cloud Run"
+    value: "3"
+  - label: "Categorias de tópico"
+    value: "11"
+  - label: "Cadências"
+    value: "Daily + Weekly"
+  - label: "Sinais de ranking"
+    value: "5"
+learnings:
+  - "Scoring composto supera personalização só por prompt em explicabilidade, controle de custo e ranking ajustável"
+  - "Primitivas de scoring em `@workspace/shared` mantêm o web app e o worker Python alinhados conceitualmente"
+  - "Separar collect e deliver como jobs Cloud Run torna o pipeline operável sem acoplar à camada web"
+heroLabel: "Pipeline de Inteligência"
+---

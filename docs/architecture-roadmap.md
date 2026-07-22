@@ -447,7 +447,7 @@ Não iniciar E6 (routing i18n) antes de E2–E5 terem estabilizado a camada de c
 
 **Feito:**
 
-1. Migrados `quark`, `passanota`, `drop`, `newsletter` (`meta.json` + `en.mdx` + `pt-BR.mdx` espelhando EN)
+1. Migrados `quark`, `passanota`, `drop`, `astra` (`meta.json` + `en.mdx` + `pt-BR.mdx` espelhando EN)
 2. Demo URLs: defaults em `meta.json`; overlay via `NEXT_PUBLIC_*` no loader
 3. Removido `src/lib/personal-projects.ts`
 4. Loader `server-only` + Zod; hero recebe `projectIndex` por props

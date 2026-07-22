@@ -58,7 +58,7 @@ function applyEnvOverlay(
     quark: process.env.NEXT_PUBLIC_QUARK_DEMO_URL,
     passanota: process.env.NEXT_PUBLIC_PASSANOTA_DEMO_URL,
     drop: process.env.NEXT_PUBLIC_DROP_DEMO_URL,
-    newsletter: process.env.NEXT_PUBLIC_NEWSLETTER_DEMO_URL,
+    astra: process.env.NEXT_PUBLIC_ASTRA_DEMO_URL,
   };
 
   if (slug in demoEnv) {
@@ -69,8 +69,8 @@ function applyEnvOverlay(
     }
   }
 
-  if (slug === "newsletter") {
-    const githubEnv = process.env.NEXT_PUBLIC_NEWSLETTER_GITHUB_URL;
+  if (slug === "astra") {
+    const githubEnv = process.env.NEXT_PUBLIC_ASTRA_GITHUB_URL;
     if (githubEnv !== undefined) {
       if (githubEnv) next.github = githubEnv;
       else delete next.github;
