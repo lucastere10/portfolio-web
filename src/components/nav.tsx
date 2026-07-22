@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { trackLabsEvent } from "@/lib/labs-analytics";
+import { useTheme } from "@wrksz/themes/client";
+import { trackLabsEvent } from "@/lib/analytics/labs-analytics";
+import { Link, usePathname } from "@/i18n/navigation";
 
 function GitHubIcon() {
   return (
@@ -30,32 +30,33 @@ function LinkedInIcon() {
   );
 }
 
-const links = [
-  { href: "/work", label: "Work" },
-  { href: "/projects", label: "Projects" },
-  { href: "/labs", label: "Labs" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-];
-
 export function Nav() {
   const pathname = usePathname();
+  const locale = useLocale();
   const { theme, setTheme } = useTheme();
+  const t = useTranslations("nav");
+  const links = [
+    { href: "/work" as const, label: t("work") },
+    { href: "/projects" as const, label: t("projects") },
+    { href: "/labs" as const, label: t("labs") },
+    { href: "/about" as const, label: t("about") },
+    { href: "/contact" as const, label: t("contact") },
+  ];
+  const otherLocale = locale === "pt-BR" ? "en" : "pt-BR";
+  const otherLabel = otherLocale === "pt-BR" ? "PT" : "EN";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur-md">
       <div className="content-width-wide px-6">
         <div className="flex h-14 items-center justify-between gap-4">
-          {/* Wordmark */}
           <Link
             href="/"
             className="text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-[var(--gold)]"
           >
-            Lucas Caldas
+            {t("brand")}
           </Link>
 
           <div className="flex items-center gap-3">
-            {/* Desktop nav */}
             <nav className="hidden md:flex items-center gap-8">
               {links.map(({ href, label }) => {
                 const active =
@@ -89,8 +90,16 @@ export function Nav() {
               })}
             </nav>
 
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 pl-2 ml-1 border-l border-border/70">
               <Link
+                href={pathname}
+                locale={otherLocale}
+                aria-label={t("ariaLanguage")}
+                className="inline-flex h-9 items-center px-2 text-[11px] uppercase tracking-[0.14em] text-muted-foreground/70 transition-colors hover:text-muted-foreground"
+              >
+                {otherLabel}
+              </Link>
+              <a
                 href="https://github.com/lucastere10"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -105,8 +114,8 @@ export function Nav() {
                 className="inline-flex h-9 w-9 items-center justify-center rounded border border-border text-muted-foreground transition-colors hover:text-foreground hover:border-foreground"
               >
                 <GitHubIcon />
-              </Link>
-              <Link
+              </a>
+              <a
                 href="https://linkedin.com/in/lucas-caldas50"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -121,18 +130,17 @@ export function Nav() {
                 className="inline-flex h-9 w-9 items-center justify-center rounded border border-border text-muted-foreground transition-colors hover:text-foreground hover:border-foreground"
               >
                 <LinkedInIcon />
-              </Link>
+              </a>
+              <button
+                type="button"
+                aria-label={t("ariaTheme")}
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="inline-flex h-9 w-9 items-center justify-center rounded border border-border text-muted-foreground transition-colors hover:text-foreground hover:border-foreground cursor-pointer"
+              >
+                <Sun className="h-4 w-4 dark:hidden" />
+                <Moon className="hidden h-4 w-4 dark:block" />
+              </button>
             </div>
-
-            <button
-              type="button"
-              aria-label="Toggle theme"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="inline-flex h-9 w-9 items-center justify-center rounded border border-border text-muted-foreground transition-colors hover:text-foreground hover:border-foreground cursor-pointer"
-            >
-              <Sun className="h-4 w-4 dark:hidden" />
-              <Moon className="hidden h-4 w-4 dark:block" />
-            </button>
           </div>
         </div>
       </div>

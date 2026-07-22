@@ -1,0 +1,13 @@
+{
+  "slug": "computer-vision-analytics",
+  "domain": "Computer Vision",
+  "stack": [
+    "Python",
+    "OpenCV",
+    "YOLO",
+    "PostgreSQL",
+    "FastAPI"
+  ],
+  "featured": false,
+  "order": 5
+}

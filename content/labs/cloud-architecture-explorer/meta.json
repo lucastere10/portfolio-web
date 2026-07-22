@@ -1,0 +1,12 @@
+{
+  "slug": "cloud-architecture-explorer",
+  "domain": "Cloud Architecture / GCP",
+  "tags": [
+    "gcp",
+    "cloud-run",
+    "pubsub",
+    "bigquery"
+  ],
+  "order": 4,
+  "demoKey": "cloud-architecture-explorer"
+}

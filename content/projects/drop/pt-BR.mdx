@@ -1,0 +1,36 @@
+---
+name: "Drop"
+tagline: "Dados limpos. Insights claros. Ação imediata."
+overview: "Drop é uma plataforma self-serve de análise de dados que transforma planilhas brutas em insights acionáveis em minutos. Usuários arrastam CSV, XLSX ou JSON e recebem profiling estatístico instantâneo — detecção de schema, valores faltantes, correlações, outliers e um score de qualidade com nota letra. A IA gera resumos executivos, insights priorizados, recomendações de casos de uso de ML e gráficos automáticos em um dashboard com grid arrastável. Um assistente de chat flutuante permite perguntas em linguagem natural sobre o dataset. Trials anônimos expiram em 24 horas; usuários autenticados têm histórico persistente, compartilhamento, favoritos e cota baseada em créditos nos planos Free, Paid e Enterprise."
+highlights:
+  - "Fluxo upload zero-to-insight com handoff via sessionStorage para render imediato da página de resultados"
+  - "Suite AI Discovery — resumos executivos, insights priorizados e recomendações de ML via Cloud Tasks assíncronas"
+  - "Dashboard de gráficos inteligentes — grid drag-and-resize com Recharts e persistência de layout"
+  - "Arquitetura split — repositórios Next.js e Django independentes, cada um com pipeline Cloud Build → Cloud Run"
+features:
+  - "Upload drag-and-drop para CSV, XLSX e JSON com profiling estatístico instantâneo"
+  - "Score de qualidade de dados com notas S–F e breakdown (completude, unicidade, consistência)"
+  - "Insights de IA — resumos executivos, recomendações de ML e achados priorizados com alertas de qualidade"
+  - "Gráficos inteligentes gerados automaticamente (barra, linha, pizza, scatter) em grid responsivo"
+  - "Exploração conversacional — chat flutuante com perguntas sugeridas e histórico multi-turn"
+  - "Auth multi-canal — email/senha, Google, GitHub, magic link e login móvel por QR"
+  - "Análises salvas com busca, favoritos, toggle público/privado e links compartilháveis"
+  - "Modelo freemium de créditos — Anonymous, Free, Paid e Enterprise com tracking de uso"
+  - "Cinco datasets de exemplo para explorar sem upload"
+  - "Polling de tasks assíncronas (HTTP 202 + Cloud Tasks) com backoff exponencial para jobs de IA longos"
+technicalNotes: "O frontend Next.js usa uma camada Axios tipada; respostas de upload são cacheadas em sessionStorage para a página de resultados renderizar imediatamente. `NEXT_PUBLIC_API_URL` é injetada no build Docker para deploy standalone no Cloud Run. A API Django REST faz profiling com pandas de forma síncrona no upload e offloada o trabalho de IA para workers Cloud Tasks (`ai_insights`, `ai_chat`, `chart_generation`). Clientes fazem poll em `/api/tasks/{id}/` até concluir. Arquivos ficam no Google Cloud Storage com signed URLs; auth usa JWT com refresh rotation em cinco canais de login."
+metrics:
+  - label: "Stack"
+    value: "Next.js 16 + Django 5.2"
+  - label: "Formatos"
+    value: "CSV, XLSX, JSON"
+  - label: "IA"
+    value: "Gemini ADK + OpenAI"
+  - label: "Deploy"
+    value: "GCP Cloud Run"
+learnings:
+  - "SessionStorage como cache de upload elimina o flash de loading na página de resultados e lida bem com React Strict Mode"
+  - "IA assíncrona via Cloud Tasks (202 + poll) mantém a UI responsiva e evita timeouts de request no Cloud Run"
+  - "Injeção de `NEXT_PUBLIC_*` em build time é necessária para output standalone do Next.js no Cloud Run — env só em runtime não basta"
+heroLabel: "Análise de dados com IA"
+---

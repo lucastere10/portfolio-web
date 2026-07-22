@@ -1,14 +1,20 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight, ChevronDown, X, Send } from "lucide-react";
-import { AgentChatResponse, AgentProjectMatch, UIChatMessage } from "@/lib/agent-types";
+import { AgentChatResponse, AgentProjectMatch, UIChatMessage } from "@/lib/agent/types";
 import { getPipelineStatusDisplay, useAgentHealth } from "@/hooks/use-agent-health";
 import { ChatPanel } from "./chat-panel";
 import { ContentPanel } from "./content-panel";
-import { domains } from "@/lib/portfolio-content";
-import { trackSiteInteraction } from "@/lib/labs-analytics";
+import type {
+  LabDefinition,
+  PageDomain,
+  PersonalProject,
+  WorkDetail,
+} from "@/content/schemas";
+import { trackSiteInteraction } from "@/lib/analytics/labs-analytics";
 
 const SESSION_KEY = "portfolio_agent_session_id";
 
@@ -39,7 +45,17 @@ async function fetchAgentChat(
   return res.json() as Promise<AgentChatResponse>;
 }
 
-export function HeroSection() {
+export function HeroSection({
+  domains,
+  workIndex,
+  projectIndex,
+  labIndex,
+}: {
+  domains: PageDomain[];
+  workIndex: WorkDetail[];
+  projectIndex: PersonalProject[];
+  labIndex: LabDefinition[];
+}) {
   const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<UIChatMessage[]>([]);
@@ -57,6 +73,7 @@ export function HeroSection() {
   const chatOpenedRef = useRef(false);
   const { status: agentHealthStatus } = useAgentHealth();
   const pipelineStatus = getPipelineStatusDisplay(agentHealthStatus);
+  const t = useTranslations("hero");
 
   // Trap focus inside overlay when open
   useEffect(() => {
@@ -132,11 +149,11 @@ export function HeroSection() {
         const errorText =
           err instanceof Error
             ? err.message === "Agent unavailable"
-              ? "Couldn't connect to the assistant. Make sure the backend is running and try again."
+              ? t("errorUnavailable")
               : err.message === "Agent request timed out"
-                ? "The assistant took too long to respond. Please try again."
+                ? t("errorTimeout")
                 : err.message
-            : "Couldn't connect to the assistant. Make sure the backend is running and try again.";
+            : t("errorUnavailable");
 
         const errMsg: UIChatMessage = {
           id: `e-${Date.now()}`,
@@ -148,7 +165,7 @@ export function HeroSection() {
         setLoading(false);
       }
     },
-    [loading, sessionId]
+    [loading, sessionId, t]
   );
 
   const handleSelectMatch = useCallback(
@@ -226,7 +243,7 @@ export function HeroSection() {
                   className="text-mono text-xs tracking-[0.22em] uppercase"
                   style={{ color: "var(--gold)" }}
                 >
-                  Backend Engineering · AI Automation · GCP
+                  {t("eyebrow")}
                 </span>
               </div>
 
@@ -239,9 +256,9 @@ export function HeroSection() {
                     color: "var(--hero-text)",
                   }}
                 >
-                  Building reliable systems.
+                  {t("headline1")}
                   <br />
-                  Solving complex problems.
+                  {t("headline2")}
                 </h1>
                 <p
                   className="text-mono text-[11px] leading-none tracking-[0.16em] uppercase"
@@ -255,8 +272,7 @@ export function HeroSection() {
                 className="hero-fade-2 text-base leading-relaxed max-w-xl"
                 style={{ color: "var(--hero-muted)" }}
               >
-                I build with quality, earn trust through consistency, and solve
-                hard problems with clear and reliable execution.
+                {t("lead")}
               </p>
 
               <div className="hero-fade-2 flex flex-wrap gap-2.5 max-w-xl">
@@ -284,7 +300,7 @@ export function HeroSection() {
                     color: "var(--hero-bg)",
                   }}
                 >
-                  See Delivery Cases <ArrowRight className="w-4 h-4" />
+                  {t("ctaCases")} <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   href="/about"
@@ -295,7 +311,7 @@ export function HeroSection() {
                     color: "var(--hero-text)",
                   }}
                 >
-                  Architecture Approach
+                  {t("ctaAbout")}
                 </Link>
               </div>
             </div>
@@ -324,7 +340,7 @@ export function HeroSection() {
                       className="text-mono text-xs tracking-[0.14em] uppercase"
                       style={{ color: "var(--hero-text)" }}
                     >
-                      Delivery Pipeline
+                      {t("pipelineTitle")}
                     </span>
                   </div>
                   <span
@@ -346,20 +362,20 @@ export function HeroSection() {
                     className="text-mono text-[10px] tracking-[0.16em] uppercase mb-3"
                     style={{ color: "var(--gold)" }}
                   >
-                    Outcome Focus
+                    {t("outcomeFocus")}
                   </p>
                   <div className="flex flex-col gap-0.5">
                     <span
                       className="text-sm font-medium"
                       style={{ color: "var(--hero-text)" }}
                     >
-                      Reliable backend systems and automated decision flows
+                      {t("outcomeTitle")}
                     </span>
                     <span
                       className="text-mono text-xs"
                       style={{ color: "var(--hero-muted)" }}
                     >
-                      Architected for scale, observability, and fast iteration
+                      {t("outcomeSubtitle")}
                     </span>
                   </div>
                 </div>
@@ -371,7 +387,7 @@ export function HeroSection() {
                     className="text-mono text-[10px] tracking-[0.16em] uppercase mb-3"
                     style={{ color: "var(--gold)" }}
                   >
-                    Core Expertise
+                    {t("coreExpertise")}
                   </p>
                   <ul className="flex flex-col gap-1.5">
                     {domains.slice(0, 4).map((domain) => (
@@ -391,7 +407,7 @@ export function HeroSection() {
                     className="text-mono text-[10px] tracking-[0.16em] uppercase mb-3"
                     style={{ color: "var(--gold)" }}
                   >
-                    Active Stack
+                    {t("activeStack")}
                   </p>
                   <div className="flex flex-col gap-1.5">
                     {[
@@ -426,7 +442,7 @@ export function HeroSection() {
                   className="text-mono text-[10px] tracking-[0.16em] uppercase mb-2 block"
                   style={{ color: "var(--gold)" }}
                 >
-                  What are you looking for?
+                  {t("queryLabel")}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -442,20 +458,20 @@ export function HeroSection() {
                         handleHeroSubmit();
                       }
                     }}
-                    placeholder="Ex: AI agent for operations, scalable backend, or MLOps pipeline"
+                    placeholder={t("placeholder")}
                     className="flex-1 rounded-md border px-3 py-2 text-sm bg-transparent focus:outline-none focus:ring-2"
                     style={{
                       borderColor: "var(--hero-border)",
                       color: "var(--hero-text)",
                     }}
-                    aria-label="Describe your challenge to find relevant solutions"
+                    aria-label={t("ariaDescribe")}
                   />
                   <button
                     onClick={handleHeroSubmit}
                     disabled={!inputValue.trim()}
                     className="shrink-0 p-2 rounded-md transition-opacity disabled:opacity-30 hover:opacity-70"
                     style={{ color: "var(--gold)" }}
-                    aria-label="Submit query to Portfolio Assistant"
+                    aria-label={t("ariaSubmit")}
                   >
                     <Send className="w-4 h-4" />
                   </button>
@@ -464,7 +480,7 @@ export function HeroSection() {
                   className="text-mono text-[10px] tracking-[0.08em] mt-2"
                   style={{ color: "var(--hero-muted)" }}
                 >
-                  Describe your challenge and discover relevant solutions.
+                  {t("queryHint")}
                 </p>
               </div>
             </div>
@@ -476,7 +492,7 @@ export function HeroSection() {
               className="text-mono text-[9px] tracking-[0.22em] uppercase"
               style={{ color: "var(--hero-muted)" }}
             >
-              Scroll
+              {t("scroll")}
             </span>
             <ChevronDown
               className="animate-scroll-bounce w-4 h-4"
@@ -492,7 +508,7 @@ export function HeroSection() {
           open
           className="fixed inset-0 z-50 flex flex-col animate-split-in m-0 p-0 border-0 w-full h-full max-w-none max-h-none"
           style={{ background: "var(--hero-bg)" }}
-          aria-label="Portfolio Assistant"
+          aria-label={t("ariaAssistant")}
         >
           {/* Ambient grid (decorative) */}
           <div
@@ -540,7 +556,7 @@ export function HeroSection() {
                 borderColor: "var(--hero-border)",
                 color: "var(--hero-muted)",
               }}
-              aria-label="Close Portfolio Assistant (Esc)"
+              aria-label={t("ariaClose")}
             >
               <X className="w-4 h-4" />
             </button>
@@ -579,13 +595,16 @@ export function HeroSection() {
                   className="text-mono text-[10px] uppercase tracking-[0.16em]"
                   style={{ color: "var(--hero-muted)" }}
                 >
-                  Recommended content
+                  {t("recommendedContent")}
                 </p>
               </div>
               <ContentPanel
                 response={agentResponse}
                 onSelectMatch={handleSelectMatch}
                 onSuggestQuery={handleSuggestQuery}
+                workIndex={workIndex}
+                projectIndex={projectIndex}
+                labIndex={labIndex}
               />
             </div>
           </div>

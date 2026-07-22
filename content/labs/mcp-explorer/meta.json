@@ -1,0 +1,12 @@
+{
+  "slug": "mcp-explorer",
+  "domain": "AI Agents & Automation",
+  "tags": [
+    "mcp",
+    "github",
+    "jira",
+    "database"
+  ],
+  "order": 3,
+  "demoKey": "mcp-explorer"
+}

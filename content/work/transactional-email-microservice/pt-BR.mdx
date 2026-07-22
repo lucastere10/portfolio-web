@@ -1,0 +1,20 @@
+---
+name: Microsserviço de Email Transacional
+tagline: Microsserviço desacoplado baseado em filas para envio de emails
+impact: Microsserviço desacoplado com fila de mensagens, reutilizado em múltiplos produtos sem alteração de código.
+context: Vários produtos da empresa precisavam enviar emails transacionais (confirmação, notificação, alertas). Cada produto tinha sua própria implementação duplicada.
+challenges:
+  - Desacoplar completamente o envio de email da lógica de negócio dos produtos
+  - Garantir entrega confiável mesmo quando o provider SMTP está indisponível
+  - Suportar templates dinâmicos sem requerer deploy para cada mudança de conteúido
+decisions:
+  - title: Fila de mensagens como interface pública
+    reasoning: Produtores publicam na fila e não são afetados por indisponibilidade do SMTP. O consumidor processa na velocidade do provider, com retry automático.
+  - title: Templates armazenados separadamente
+    reasoning: Templates em banco de dados permitem alteração de conteúido sem deploy. Produtores enviam apenas o payload de dados.
+tradeoffs: Delivery assíncrono significa que o remetente não sabe imediatamente se o email foi enviado. Aceitável para emails transacionais onde latência de segundos é tolerada.
+implementation: Consumer Python lendo de fila RabbitMQ, renderizando templates Jinja2, enviando via SMTP com retry exponencial. Dead letter queue para falhas persistentes com alerta operacional.
+learnings:
+  - Dead letter queue é essencial — sem ela emails falhos são perdidos silenciosamente
+  - Rate limiting no consumer evita ban do provider SMTP por envio em ráfagas
+---

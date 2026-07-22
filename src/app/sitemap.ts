@@ -1,40 +1,41 @@
 import type { MetadataRoute } from "next";
-import { projects } from "@/lib/projects";
-import { personalProjects } from "@/lib/personal-projects";
-import { LABS } from "@/lib/labs";
+import { getWorkSlugs } from "@/content/work";
+import { getProjectSlugs } from "@/content/projects";
+import { getLabSlugs } from "@/content/labs";
+import { routing } from "@/i18n/routing";
+import { absoluteUrl, languageAlternates } from "@/i18n/seo";
+
+function entriesForPath(pathname: string, priority: number): MetadataRoute.Sitemap {
+  const languages = languageAlternates(pathname);
+  return routing.locales.map((locale) => ({
+    url: absoluteUrl(locale, pathname),
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority,
+    alternates: { languages },
+  }));
+}
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://lucas.dev"; // replace with real domain
+  const staticPaths: Array<{ path: string; priority: number }> = [
+    { path: "/", priority: 1 },
+    { path: "/work", priority: 0.8 },
+    { path: "/projects", priority: 0.8 },
+    { path: "/labs", priority: 0.8 },
+    { path: "/about", priority: 0.8 },
+    { path: "/contact", priority: 0.8 },
+  ];
 
-  const staticRoutes = ["/", "/work", "/projects", "/labs", "/about", "/contact"].map(
-    (path) => ({
-      url: `${base}${path}`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: path === "/" ? 1 : 0.8,
-    }),
-  );
+  const slugPaths = [
+    ...getWorkSlugs().map((slug) => `/work/${slug}`),
+    ...getProjectSlugs().map((slug) => `/projects/${slug}`),
+    ...getLabSlugs().map((slug) => `/labs/${slug}`),
+  ];
 
-  const workRoutes = projects.map((p) => ({
-    url: `${base}/work/${p.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
-
-  const personalRoutes = personalProjects.map((p) => ({
-    url: `${base}/projects/${p.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
-
-  const labRoutes = LABS.map((lab) => ({
-    url: `${base}/labs/${lab.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
-
-  return [...staticRoutes, ...workRoutes, ...personalRoutes, ...labRoutes];
+  return [
+    ...staticPaths.flatMap(({ path, priority }) =>
+      entriesForPath(path, priority),
+    ),
+    ...slugPaths.flatMap((path) => entriesForPath(path, 0.7)),
+  ];
 }

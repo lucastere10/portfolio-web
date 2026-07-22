@@ -1,0 +1,13 @@
+{
+  "slug": "service-licensing-system",
+  "domain": "Backend Engineering",
+  "stack": [
+    "C#",
+    ".NET",
+    "PostgreSQL",
+    "JWT",
+    "REST APIs"
+  ],
+  "featured": false,
+  "order": 6
+}

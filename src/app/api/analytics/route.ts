@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
-import { appendAnalyticsEvent } from "@/lib/analytics-store";
-import { isAgentChatRequestAllowed } from "@/lib/agent-origin";
-import { isAnalyticsRateLimited } from "@/lib/agent-rate-limit";
-import { logPortfolioEvent } from "@/lib/structured-log";
+import { appendAnalyticsEvent } from "@/lib/analytics/store";
+import { isAgentChatRequestAllowed } from "@/lib/agent/origin";
+import { isAnalyticsRateLimited } from "@/lib/agent/rate-limit";
+import { logPortfolioEvent } from "@/lib/analytics/structured-log";
 
 const MAX_FIELD_LEN = 128;
 const MAX_PATH_LEN = 256;

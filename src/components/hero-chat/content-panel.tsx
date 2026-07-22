@@ -1,17 +1,23 @@
 "use client";
 
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { ArrowRight, ExternalLink } from "lucide-react";
-import { AgentChatResponse, AgentProjectMatch } from "@/lib/agent-types";
-import { resolveLocale, caseStudies } from "@/lib/projects";
-import { getLabBySlug } from "@/lib/labs";
-import { getPersonalProjectBySlug } from "@/lib/personal-projects";
-import { trackContentLinkClick } from "@/lib/labs-analytics";
+import { AgentChatResponse, AgentProjectMatch } from "@/lib/agent/types";
+import type {
+  LabDefinition,
+  PersonalProject,
+  WorkDetail,
+} from "@/content/schemas";
+import { trackContentLinkClick } from "@/lib/analytics/labs-analytics";
 
 interface ContentPanelProps {
   response: AgentChatResponse | null;
   onSelectMatch: (match: AgentProjectMatch) => void;
   onSuggestQuery?: (query: string) => void;
+  workIndex: WorkDetail[];
+  projectIndex: PersonalProject[];
+  labIndex: LabDefinition[];
 }
 
 interface NormalizedItem {
@@ -27,12 +33,33 @@ interface NormalizedItem {
   slug: string;
 }
 
+function findWork(workIndex: WorkDetail[], id: string): WorkDetail | undefined {
+  return workIndex.find((w) => w.slug === id);
+}
+
+function findPersonalProject(
+  projectIndex: PersonalProject[],
+  id: string,
+): PersonalProject | undefined {
+  return projectIndex.find((p) => p.slug === id);
+}
+
+function findLab(
+  labIndex: LabDefinition[],
+  id: string,
+): LabDefinition | undefined {
+  return labIndex.find((l) => l.slug === id);
+}
+
 function getLocalData(
   id: string,
-  type: "project" | "lab" | "personal_project"
+  type: "project" | "lab" | "personal_project",
+  workIndex: WorkDetail[],
+  projectIndex: PersonalProject[],
+  labIndex: LabDefinition[],
 ): NormalizedItem | null {
   if (type === "personal_project") {
-    const pp = getPersonalProjectBySlug(id);
+    const pp = findPersonalProject(projectIndex, id);
     if (!pp) return null;
     return {
       type: "personal_project",
@@ -48,9 +75,8 @@ function getLocalData(
     };
   }
   if (type === "project") {
-    const cs = caseStudies.find((c) => c.slug === id);
-    if (!cs) return null;
-    const r = resolveLocale(cs, "en");
+    const r = findWork(workIndex, id);
+    if (!r) return null;
     return {
       type: "project",
       name: r.name,
@@ -64,7 +90,7 @@ function getLocalData(
       slug: id,
     };
   }
-  const lab = getLabBySlug(id);
+  const lab = findLab(labIndex, id);
   if (!lab) return null;
   return {
     type: "lab",
@@ -80,15 +106,20 @@ function getLocalData(
   };
 }
 
-function getMatchDescription(match: AgentProjectMatch): string {
+function getMatchDescription(
+  match: AgentProjectMatch,
+  workIndex: WorkDetail[],
+  projectIndex: PersonalProject[],
+  labIndex: LabDefinition[],
+): string {
   if (match.type === "personal_project") {
-    const pp = getPersonalProjectBySlug(match.id);
+    const pp = findPersonalProject(projectIndex, match.id);
     if (pp) return pp.tagline;
   } else if (match.type === "project") {
-    const cs = caseStudies.find((c) => c.slug === match.id);
-    if (cs) return resolveLocale(cs, "en").tagline;
+    const work = findWork(workIndex, match.id);
+    if (work) return work.tagline;
   } else {
-    const lab = getLabBySlug(match.id);
+    const lab = findLab(labIndex, match.id);
     if (lab) return lab.summary;
   }
   return match.title;
@@ -97,26 +128,27 @@ function getMatchDescription(match: AgentProjectMatch): string {
 // ── Sub-components ──────────────────────────────────────────────────────────
 
 function TypeTag({ type }: { type: "project" | "lab" | "personal_project" }) {
+  const t = useTranslations("hero");
   const styles =
     type === "project"
       ? {
           color: "oklch(0.65 0.15 230)",
           borderColor: "oklch(0.65 0.15 230 / 0.3)",
           backgroundColor: "oklch(0.65 0.15 230 / 0.08)",
-          label: "project",
+          label: t("typeProject"),
         }
       : type === "lab"
         ? {
             color: "oklch(0.72 0.18 145)",
             borderColor: "oklch(0.72 0.18 145 / 0.3)",
             backgroundColor: "oklch(0.72 0.18 145 / 0.08)",
-            label: "lab",
+            label: t("typeLab"),
           }
         : {
             color: "oklch(0.78 0.16 310)",
             borderColor: "oklch(0.78 0.16 310 / 0.3)",
             backgroundColor: "oklch(0.78 0.16 310 / 0.08)",
-            label: "personal",
+            label: t("typePersonal"),
           };
 
   return (
@@ -141,6 +173,8 @@ function FeaturedCard({
   item: NormalizedItem;
   onSelect: () => void;
 }) {
+  const t = useTranslations("hero");
+
   return (
     <div
       className="rounded-xl border overflow-hidden"
@@ -163,7 +197,7 @@ function FeaturedCard({
               borderColor: "var(--hero-border)",
               color: "var(--hero-muted)",
             }}
-            title="Open full page"
+            title={t("openFullPage")}
           >
             <ExternalLink className="w-3 h-3" />
           </Link>
@@ -185,7 +219,7 @@ function FeaturedCard({
           className="inline-flex items-center gap-1.5 text-mono text-[10px] uppercase tracking-[0.12em] transition-opacity hover:opacity-70"
           style={{ color: "var(--gold)" }}
         >
-          Ask me about this <ArrowRight className="w-3 h-3" />
+          {t("askAboutThis")} <ArrowRight className="w-3 h-3" />
         </button>
       </div>
     </div>
@@ -201,20 +235,31 @@ const FEATURED_SLUGS: Array<{
   { id: "passanota", type: "personal_project" },
 ];
 
-const DOMAIN_CHIPS = [
-  { label: "AI Agents", query: "Show me your AI agent projects" },
-  { label: "Backend Engineering", query: "What backend systems have you built?" },
-  { label: "Cloud / GCP", query: "Tell me about your cloud architecture work on GCP" },
-  { label: "MLOps & Data", query: "Show me MLOps and data pipeline projects" },
-];
+function useDomainChips() {
+  const t = useTranslations("hero");
+  return [
+    { label: t("chipAi"), query: t("chipAiQuery") },
+    { label: t("chipBackend"), query: t("chipBackendQuery") },
+    { label: t("chipCloud"), query: t("chipCloudQuery") },
+    { label: t("chipMlops"), query: t("chipMlopsQuery") },
+  ];
+}
 
 function WelcomeState({
   onSuggestQuery,
+  workIndex,
+  projectIndex,
+  labIndex,
 }: {
   onSuggestQuery?: (query: string) => void;
+  workIndex: WorkDetail[];
+  projectIndex: PersonalProject[];
+  labIndex: LabDefinition[];
 }) {
+  const domainChips = useDomainChips();
+  const t = useTranslations("hero");
   const featuredItems = FEATURED_SLUGS.map(({ id, type }) =>
-    getLocalData(id, type)
+    getLocalData(id, type, workIndex, projectIndex, labIndex),
   ).filter(Boolean) as NormalizedItem[];
 
   return (
@@ -225,11 +270,10 @@ function WelcomeState({
           className="text-mono text-[10px] uppercase tracking-[0.16em] mb-1.5"
           style={{ color: "var(--gold)" }}
         >
-          Portfolio highlights
+          {t("welcomeEyebrow")}
         </p>
         <p className="text-xs leading-relaxed" style={{ color: "var(--hero-muted)" }}>
-          While we talk, here are some featured cases. Ask me anything and this
-          panel updates with the most relevant work.
+          {t("welcomeBody")}
         </p>
       </div>
 
@@ -240,10 +284,10 @@ function WelcomeState({
             className="text-mono text-[10px] uppercase tracking-[0.16em] mb-2"
             style={{ color: "var(--hero-muted)" }}
           >
-            Explore by domain
+            {t("exploreByDomain")}
           </p>
           <div className="flex flex-wrap gap-2">
-            {DOMAIN_CHIPS.map((chip) => (
+            {domainChips.map((chip) => (
               <button
                 key={chip.label}
                 onClick={() => onSuggestQuery(chip.query)}
@@ -280,6 +324,14 @@ function WelcomeState({
 }
 
 function MainItemCard({ item }: { item: NormalizedItem }) {
+  const t = useTranslations("hero");
+  const ctaLabel =
+    item.type === "project"
+      ? t("fullCaseStudy")
+      : item.type === "personal_project"
+        ? t("viewProject")
+        : t("viewLab");
+
   return (
     <div
       className="rounded-xl border overflow-hidden content-panel-in"
@@ -304,7 +356,7 @@ function MainItemCard({ item }: { item: NormalizedItem }) {
               borderColor: "var(--hero-border)",
               color: "var(--hero-muted)",
             }}
-            title="Open full page"
+            title={t("openFullPage")}
             target="_self"
           >
             <ExternalLink className="w-3.5 h-3.5" />
@@ -427,11 +479,7 @@ function MainItemCard({ item }: { item: NormalizedItem }) {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-85"
           style={{ backgroundColor: "var(--gold)", color: "var(--hero-bg)" }}
         >
-          {item.type === "project"
-            ? "Full case study"
-            : item.type === "personal_project"
-              ? "View project"
-              : "Open lab"}
+          {ctaLabel}
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
@@ -442,11 +490,17 @@ function MainItemCard({ item }: { item: NormalizedItem }) {
 function RecommendationCard({
   match,
   onSelect,
+  workIndex,
+  projectIndex,
+  labIndex,
 }: {
   match: AgentProjectMatch;
   onSelect: (m: AgentProjectMatch) => void;
+  workIndex: WorkDetail[];
+  projectIndex: PersonalProject[];
+  labIndex: LabDefinition[];
 }) {
-  const desc = getMatchDescription(match);
+  const desc = getMatchDescription(match, workIndex, projectIndex, labIndex);
   return (
     <button
       onClick={() => onSelect(match)}
@@ -485,62 +539,114 @@ function RecommendationCard({
   );
 }
 
+function NoMatchState({
+  matches,
+  onSelectMatch,
+  onSuggestQuery,
+  workIndex,
+  projectIndex,
+  labIndex,
+}: {
+  matches: AgentProjectMatch[];
+  onSelectMatch: (match: AgentProjectMatch) => void;
+  onSuggestQuery?: (query: string) => void;
+  workIndex: WorkDetail[];
+  projectIndex: PersonalProject[];
+  labIndex: LabDefinition[];
+}) {
+  const domainChips = useDomainChips();
+
+  return (
+    <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
+      <p className="text-sm" style={{ color: "var(--hero-muted)" }}>
+        No specific match found. Try rephrasing with a technology name, domain,
+        or specific challenge.
+      </p>
+      {matches.length > 0 && (
+        <>
+          <p
+            className="text-mono text-[10px] uppercase tracking-[0.16em]"
+            style={{ color: "var(--gold)" }}
+          >
+            Closest results
+          </p>
+          {matches.slice(0, 4).map((m) => (
+            <RecommendationCard
+              key={m.id}
+              match={m}
+              onSelect={onSelectMatch}
+              workIndex={workIndex}
+              projectIndex={projectIndex}
+              labIndex={labIndex}
+            />
+          ))}
+        </>
+      )}
+      {matches.length === 0 && onSuggestQuery && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {domainChips.map((chip) => (
+            <button
+              key={chip.label}
+              onClick={() => onSuggestQuery(chip.query)}
+              className="text-mono text-[10px] uppercase tracking-[0.12em] px-3 py-1.5 rounded-full border transition-all hover:border-(--gold)/50"
+              style={{
+                color: "var(--hero-muted)",
+                borderColor: "var(--hero-border)",
+                backgroundColor: "var(--hero-chip-bg)",
+              }}
+            >
+              {chip.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main component ───────────────────────────────────────────────────────────
 
 export function ContentPanel({
   response,
   onSelectMatch,
   onSuggestQuery,
+  workIndex,
+  projectIndex,
+  labIndex,
 }: ContentPanelProps) {
   if (!response) {
-    return <WelcomeState onSuggestQuery={onSuggestQuery} />;
+    return (
+      <WelcomeState
+        onSuggestQuery={onSuggestQuery}
+        workIndex={workIndex}
+        projectIndex={projectIndex}
+        labIndex={labIndex}
+      />
+    );
   }
 
   const { selected_project, selected_type, matches } = response;
 
   if (!selected_project || !selected_type) {
     return (
-      <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
-        <p className="text-sm" style={{ color: "var(--hero-muted)" }}>
-          No specific match found. Try rephrasing with a technology name, domain,
-          or specific challenge.
-        </p>
-        {matches.length > 0 && (
-          <>
-            <p
-              className="text-mono text-[10px] uppercase tracking-[0.16em]"
-              style={{ color: "var(--gold)" }}
-            >
-              Closest results
-            </p>
-            {matches.slice(0, 4).map((m) => (
-              <RecommendationCard key={m.id} match={m} onSelect={onSelectMatch} />
-            ))}
-          </>
-        )}
-        {matches.length === 0 && onSuggestQuery && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {DOMAIN_CHIPS.map((chip) => (
-              <button
-                key={chip.label}
-                onClick={() => onSuggestQuery(chip.query)}
-                className="text-mono text-[10px] uppercase tracking-[0.12em] px-3 py-1.5 rounded-full border transition-all hover:border-(--gold)/50"
-                style={{
-                  color: "var(--hero-muted)",
-                  borderColor: "var(--hero-border)",
-                  backgroundColor: "var(--hero-chip-bg)",
-                }}
-              >
-                {chip.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+      <NoMatchState
+        matches={matches}
+        onSelectMatch={onSelectMatch}
+        onSuggestQuery={onSuggestQuery}
+        workIndex={workIndex}
+        projectIndex={projectIndex}
+        labIndex={labIndex}
+      />
     );
   }
 
-  const mainItem = getLocalData(selected_project, selected_type);
+  const mainItem = getLocalData(
+    selected_project,
+    selected_type,
+    workIndex,
+    projectIndex,
+    labIndex,
+  );
   const recommendations = matches.slice(1, 4);
 
   return (
@@ -561,6 +667,9 @@ export function ContentPanel({
                 key={rec.id}
                 match={rec}
                 onSelect={onSelectMatch}
+                workIndex={workIndex}
+                projectIndex={projectIndex}
+                labIndex={labIndex}
               />
             ))}
           </div>

@@ -1,0 +1,31 @@
+---
+name: AI Agents com ADK
+tagline: Agentes inteligentes integrados ao ecossistema GCP via MCP Toolbox
+impact: Agentes autônomos integrando Jira, Looker e BigQuery via MCP Toolbox, implantados no Cloud Run com Vertex AI.
+context: A equipe precisava de agentes inteligentes que pudessem consultar dados de negócio em Jira, Looker e BigQuery de forma autônoma, sem expor APIs internas diretamente ao modelo.
+challenges:
+  - Orquestrar múltiplas ferramentas (Jira, Looker, BigQuery) de forma confiável sem que o agente entrasse em loops
+  - Garantir segurança no acesso a dados sensíveis via MCP Toolbox no ambiente GCP
+  - Gerenciar contexto e memória em conversas longas sem ultrapassar limites de tokens
+  - Deploy no Cloud Run com cold start aceitável para uso interativo
+decisions:
+  - title: ADK + MCP Toolbox como camada de integração
+    reasoning: O ADK (Agent Development Kit) do Google oferece abstrações nativas para orquestração de agentes no ecossistema Vertex AI. O MCP Toolbox permite expor ferramentas de negócio de forma padronizada sem acoplamento direto ao modelo.
+  - title: Cloud Run para deploy serverless
+    reasoning: Escala zero para instruções infrequentes, integração nativa com Vertex AI e IAM do GCP, sem overhead de gestão de infraestrutura.
+  - title: BigQuery como fonte primária de dados analíticos
+    reasoning: Elimina a necessidade de uma camada de cache separada — o agente consulta diretamente BigQuery via SQL gerado, com resultados paginados para caber no contexto.
+tradeoffs: O MCP Toolbox adiciona uma camada de indireção que aumenta a latência em ~200ms por chamada de ferramenta. Aceitável para casos de uso conversacionais, mas não para pipelines de alta frequência.
+implementation: Cada agente é um Cloud Run service com configuração de ferramentas em YAML. O MCP Toolbox gerencia autenticação e exposição das APIs de Jira e Looker. O orquestrador em Python usa o ADK para decidir qual ferramenta invocar com base no contexto da conversa.
+learnings:
+  - Descrever ferramentas com exemplos concretos de quando não usá-las reduz chamadas desnecessárias em ~40%
+  - Separar agentes por domínio (dados vs. projeto vs. relatório) é mais robusto do que um agente genérico com muitas ferramentas
+  - Logs estruturados de cada decisão do agente são essenciais para debugging em produção
+metrics:
+  - label: Ferramentas integradas
+    value: "3"
+  - label: Latência média por turno
+    value: "~1.8s"
+  - label: Plataforma de deploy
+    value: Cloud Run / GCP
+---

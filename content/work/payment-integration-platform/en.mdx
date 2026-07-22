@@ -1,0 +1,31 @@
+---
+name: Payment Integration Platform
+tagline: "Stripe event-driven: checkout, subscriptions, and lifecycle management"
+impact: Full Stripe integration — webhooks, automated checkout, subscription management, and failed payment recovery.
+context: The product needed to support recurring payments with multiple plans, real-time upgrades/downgrades, and automatic delinquency recovery.
+challenges:
+  - Ensuring idempotency in Stripe webhook processing (events can arrive duplicated)
+  - Synchronizing subscription state between Stripe and the local database without inconsistency
+  - Managing plan transitions (upgrade/downgrade) with correct proration
+  - Recovering failed payments with intelligent retry without spamming the customer
+decisions:
+  - title: Event-driven via webhooks with idempotency
+    reasoning: Each Stripe event is processed exactly once using the event ID as an idempotency key in the database. Guarantees consistency even with Stripe retries.
+  - title: Local state as the source of truth for the application
+    reasoning: The application maintains its own subscription model synchronized via webhooks. This allows fast queries without dependence on Stripe API latency.
+  - title: Checkout Session vs. Payment Intent
+    reasoning: Checkout Session for new flows (UI hosted by Stripe, smaller PCI surface). Payment Intent only for automatic renewals already authorized.
+tradeoffs: Maintaining a local duplicate state requires periodic reconciliation with the Stripe API to detect drift. A daily reconciliation job was sufficient for the current volume.
+implementation: FastAPI receives Stripe webhooks with HMAC signature verification. Each event type has a dedicated handler. Subscription state saved in PostgreSQL with status enum (active, past_due, canceled, trialing).
+learnings:
+  - Testing webhooks locally with Stripe CLI before production saves hours of debugging
+  - Logging the full event payload (truncated) makes payment dispute auditing easier
+  - Implementing a webhook delivery log allows manual reprocessing when needed
+metrics:
+  - label: Event types handled
+    value: "12"
+  - label: Checkout success rate
+    value: ">98%"
+  - label: Delinquency recovery
+    value: Automatic
+---

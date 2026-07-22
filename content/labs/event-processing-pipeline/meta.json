@@ -1,0 +1,12 @@
+{
+  "slug": "event-processing-pipeline",
+  "domain": "Cloud Architecture / GCP",
+  "tags": [
+    "events",
+    "storage",
+    "pubsub",
+    "analytics"
+  ],
+  "order": 6,
+  "demoKey": "event-processing-pipeline"
+}

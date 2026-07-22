@@ -1,0 +1,12 @@
+{
+  "slug": "autoscaling-simulator",
+  "domain": "Cloud Architecture / GCP",
+  "tags": [
+    "scaling",
+    "slo",
+    "cloud-run",
+    "capacity"
+  ],
+  "order": 5,
+  "demoKey": "autoscaling-simulator"
+}
