@@ -1,0 +1,20 @@
+---
+name: Transactional Email Microservice
+tagline: Queue-based decoupled microservice for email delivery
+impact: Decoupled microservice with message queue, reused across multiple products without code changes.
+context: Multiple company products needed to send transactional emails (confirmation, notification, alerts). Each product had its own duplicated implementation.
+challenges:
+  - Completely decoupling email sending from product business logic
+  - Ensuring reliable delivery even when the SMTP provider is unavailable
+  - Supporting dynamic templates without requiring a deployment for each content change
+decisions:
+  - title: Message queue as the public interface
+    reasoning: "Producers publish to the queue and are unaffected by SMTP unavailability. The consumer processes at the provider's rate, with automatic retry."
+  - title: Templates stored separately
+    reasoning: Templates in the database allow content changes without deployment. Producers send only the data payload.
+tradeoffs: "Asynchronous delivery means the sender doesn't immediately know if the email was sent. Acceptable for transactional emails where seconds of latency is tolerated."
+implementation: Python consumer reading from RabbitMQ queue, rendering Jinja2 templates, sending via SMTP with exponential retry. Dead letter queue for persistent failures with operational alerting.
+learnings:
+  - Dead letter queue is essential — without it, failed emails are silently lost
+  - Rate limiting on the consumer prevents SMTP provider bans from burst sending
+---

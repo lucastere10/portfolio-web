@@ -1,0 +1,12 @@
+{
+  "slug": "data-drift-demo",
+  "domain": "MLOps & Data Pipelines",
+  "tags": [
+    "drift",
+    "accuracy",
+    "precision",
+    "recall"
+  ],
+  "order": 9,
+  "demoKey": "data-drift-demo"
+}

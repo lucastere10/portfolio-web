@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { isContactRateLimited } from "@/lib/agent-rate-limit";
+import { isContactRateLimited } from "@/lib/agent/rate-limit";
 import { sendContactEmail, validateContactPayload } from "@/lib/contact";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   if (isContactRateLimited(req)) {
     return NextResponse.json(
-      { ok: false, error: "Too many requests. Please try again in a minute." },
+      { ok: false, error: "rate_limited" },
       { status: 429 },
     );
   }
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     formData = await req.formData();
   } catch {
     return NextResponse.json(
-      { ok: false, error: "Invalid form submission." },
+      { ok: false, error: "invalid_form" },
       { status: 400 },
     );
   }
@@ -49,11 +49,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   } catch (err) {
     console.error("Contact form failed:", err);
     return NextResponse.json(
-      {
-        ok: false,
-        error:
-          "Could not send your message. Please try again or email me directly.",
-      },
+      { ok: false, error: "send_failed" },
       { status: 502 },
     );
   }

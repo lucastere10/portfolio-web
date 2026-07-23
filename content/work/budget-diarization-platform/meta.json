@@ -1,0 +1,17 @@
+{
+  "slug": "budget-diarization-platform",
+  "domain": "Data Engineering",
+  "stack": [
+    "TypeScript",
+    "TanStack Start",
+    "React",
+    "Bun",
+    "MySQL",
+    "SQL Server",
+    "Zod",
+    "Docker",
+    "Kubernetes"
+  ],
+  "featured": false,
+  "order": 7
+}

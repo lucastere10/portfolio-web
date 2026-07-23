@@ -1,0 +1,13 @@
+{
+  "slug": "gpos-payment-system",
+  "domain": "Payment Systems",
+  "stack": [
+    ".NET",
+    "C#",
+    "PIX",
+    "mTLS",
+    "REST APIs"
+  ],
+  "featured": true,
+  "order": 3
+}

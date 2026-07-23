@@ -1,0 +1,20 @@
+---
+name: Service Licensing System
+tagline: Token activation, permission management, and admin CRUDs
+impact: Licensing system with token activation, granular permission control, and complete admin panel.
+context: The product needed to control access to features by license plan, with self-service activation and centralized admin management.
+challenges:
+  - Modeling granular permissions per feature without exploding schema complexity
+  - Token activation flow with expiration and single-use invalidation
+  - Admin panel with complete CRUDs without a pre-made admin framework
+decisions:
+  - title: Single-use activation tokens
+    reasoning: Tokens generated at sale, hashed in the database, valid for N days. After use, marked as consumed. Prevents reuse and is easy to audit.
+  - title: Bit-flag permissions instead of junction table
+    reasoning: Permission count is fixed and small (<64). Bit-flag simplifies verification queries and reduces joins.
+tradeoffs: Bit-flag makes adding new permissions more rigid. Accepted given that the feature set is stable and small.
+implementation: .NET 8 + EF Core + PostgreSQL. Tokens with SHA-256 + salt hash. JWT for authenticated sessions with permission claims. REST controllers with policy-based authorization.
+learnings:
+  - Never store tokens in plain text — even activation tokens must be hashed
+  - Audit log in a separate table for each permission mutation is essential for support
+---

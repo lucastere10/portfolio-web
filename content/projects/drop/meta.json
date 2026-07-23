@@ -1,0 +1,35 @@
+{
+  "slug": "drop",
+  "domain": "Data Analytics / AI",
+  "stack": [
+    "Next.js 16",
+    "React 19",
+    "TypeScript",
+    "Tailwind CSS 4",
+    "shadcn/ui",
+    "Recharts",
+    "react-grid-layout",
+    "Django 5.2",
+    "DRF",
+    "pandas",
+    "PostgreSQL",
+    "Google ADK",
+    "Gemini",
+    "OpenAI",
+    "Cloud Tasks",
+    "GCS",
+    "Cloud Run"
+  ],
+  "status": "live",
+  "featured": true,
+  "order": 3,
+  "links": {
+    "demo": "https://drop.caldasdev.com.br/",
+    "github": "https://github.com/lucastere10/drop-frontend",
+    "repo": "https://github.com/lucastere10/drop-api"
+  },
+  "heroVisual": {
+    "accent": "#6366f1",
+    "background": "linear-gradient(135deg, #0a0a12 0%, #12102a 50%, #0a0a12 100%)"
+  }
+}

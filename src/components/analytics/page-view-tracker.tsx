@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import { trackPageView } from "@/lib/labs-analytics";
+import { useSearchParams } from "next/navigation";
+import { usePathname } from "@/i18n/navigation";
+import { trackPageView } from "@/lib/analytics/labs-analytics";
 
 export function PageViewTracker() {
   const pathname = usePathname();

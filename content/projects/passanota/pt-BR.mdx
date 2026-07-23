@@ -1,0 +1,36 @@
+---
+name: "PassaNota"
+tagline: "Cada nota registrada. Cada despesa sob controle."
+overview: "PassaNota é uma plataforma B2B de controle de despesas para empresas brasileiras. Times fotografam notas fiscais no desktop ou em dispositivos móveis pareados; um pipeline de vision LLM extrai dados estruturados — fornecedor, itens, totais e datas — sem digitação manual. Gestores têm dashboards com tendências de gasto, breakdown por categoria e produtos mais frequentes, enquanto operadores capturam notas em campo. O sistema oferece multiempresa, acesso por papéis e tooling de admin de plataforma, implantado no GCP Cloud Run com auth Supabase e IAM serviço-a-serviço entre frontend e API."
+highlights:
+  - "Pipeline de IA ponta a ponta para notas — pré-processamento OpenCV mais extração multi-provider com vision LLM"
+  - "Arquitetura BFF de produção — proxy Next.js com IAM Cloud Run, encaminhamento de JWT Supabase e headers multi-tenant"
+  - "Design SaaS multi-tenant — papéis gestor/operador, pareamento QR + PIN, visão admin da plataforma"
+  - "Arquitetura split — frontend Next.js (`passanota-web`) e backend FastAPI (`passanota-api`) no GCP"
+features:
+  - "Captura de notas com IA via upload ou câmera ao vivo com detecção de documento"
+  - "Processamento assíncrono em background com tracking de status via Cloud Tasks"
+  - "Dashboard de gastos — totais, ticket médio, comparação de períodos, gráficos por categoria e emissor"
+  - "Lista paginada de notas com detalhe de itens e badges de confiança da IA"
+  - "Edição manual de itens e categorização quando a extração precisa de correção"
+  - "Busca semântica de produtos em itens de nota com embeddings pgvector"
+  - "Suporte multiempresa com switcher e dados isolados por tenant"
+  - "Pareamento de dispositivo móvel (QR + PIN) para operadores em campo sem login completo"
+  - "Auth passwordless via magic link Supabase com fluxo de completar perfil"
+  - "Painel admin da plataforma — métricas por empresa, uso e gestão de tenants"
+technicalNotes: "O app Next.js roteia todas as chamadas de API por um proxy BFF em `/api/proxy/*`, encaminhando o Bearer Supabase, `X-Empresa-Id` e tokens de dispositivo. Em produção, o proxy troca o JWT do usuário por um ID token IAM do Cloud Run para alcançar o FastAPI privado. A API roda um pipeline assíncrono: guarda a foto no Supabase Storage, enfileira Cloud Tasks, pré-processa com OpenCV, extrai com vision LLM, persiste itens e normaliza categorias em SQL com keywords e embeddings. A busca semântica usa índices HNSW pgvector em embeddings multilíngues."
+metrics:
+  - label: "Stack"
+    value: "Next.js 16 + FastAPI"
+  - label: "Pipeline de IA"
+    value: "Vision LLM + OpenCV"
+  - label: "Busca"
+    value: "pgvector HNSW"
+  - label: "Deploy"
+    value: "GCP Cloud Run"
+learnings:
+  - "Vision LLMs lidam melhor com notas térmicas bagunçadas do que OCR por template — o pré-processamento OpenCV ainda importa para a qualidade da extração"
+  - "Uma camada BFF com IAM Cloud Run é o jeito mais limpo de manter a API privada e ainda encaminhar o contexto do usuário Supabase"
+  - "Categorização híbrida — primeira passagem LLM mais refinamento por keyword/embedding em SQL — mantém a taxonomia consistente entre tenants"
+heroLabel: "Controle de custos via notas fiscais"
+---

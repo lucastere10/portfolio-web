@@ -2,17 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 
-import { postToAgent } from "@/lib/agent-auth";
+import { postToAgent } from "@/lib/agent/auth";
 
-import { resolveAgentBaseUrl, resolveAgentTimeoutMs } from "@/lib/agent-config";
+import { resolveAgentBaseUrl, resolveAgentTimeoutMs } from "@/lib/agent/config";
 
-import { isAgentChatRequestAllowed } from "@/lib/agent-origin";
+import { isAgentChatRequestAllowed } from "@/lib/agent/origin";
 
-import { isAgentChatRateLimited } from "@/lib/agent-rate-limit";
+import { isAgentChatRateLimited } from "@/lib/agent/rate-limit";
 
-import { logPortfolioEvent } from "@/lib/structured-log";
+import { logPortfolioEvent } from "@/lib/analytics/structured-log";
 
-import type { AgentChatResponse } from "@/lib/agent-types";
+import type { AgentChatResponse } from "@/lib/agent/types";
 
 
 

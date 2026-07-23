@@ -1,0 +1,13 @@
+{
+  "slug": "transactional-email-microservice",
+  "domain": "Backend Engineering",
+  "stack": [
+    "Python",
+    "RabbitMQ",
+    "SMTP",
+    "Docker",
+    "FastAPI"
+  ],
+  "featured": false,
+  "order": 4
+}

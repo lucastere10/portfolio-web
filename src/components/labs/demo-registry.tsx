@@ -1,5 +1,5 @@
 import type { ComponentType } from "react";
-import type { LabDefinition } from "@/lib/labs";
+import type { LabDefinition } from "@/content/schemas";
 import { AutoscalingSimulatorDemo } from "@/components/labs/demos/autoscaling-simulator";
 import { CloudArchitectureExplorerDemo } from "@/components/labs/demos/cloud-architecture-explorer";
 import { DagExplorerDemo } from "@/components/labs/demos/dag-explorer";

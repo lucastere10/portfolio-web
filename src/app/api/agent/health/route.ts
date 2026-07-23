@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { getFromAgent } from "@/lib/agent-auth";
+import { getFromAgent } from "@/lib/agent/auth";
 import {
   resolveAgentBaseUrl,
   resolveAgentHealthTimeoutMs,
-} from "@/lib/agent-config";
-import { isAgentChatRequestAllowed } from "@/lib/agent-origin";
-import type { AgentHealthResponse, AgentHealthStatus } from "@/lib/agent-types";
+} from "@/lib/agent/config";
+import { isAgentChatRequestAllowed } from "@/lib/agent/origin";
+import type { AgentHealthResponse, AgentHealthStatus } from "@/lib/agent/types";
 
 function parseHealthStatus(body: unknown): AgentHealthStatus {
   if (body && typeof body === "object" && "status" in body) {

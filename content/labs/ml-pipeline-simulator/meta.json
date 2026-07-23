@@ -1,0 +1,12 @@
+{
+  "slug": "ml-pipeline-simulator",
+  "domain": "MLOps & Data Pipelines",
+  "tags": [
+    "mlops",
+    "training",
+    "deployment",
+    "monitoring"
+  ],
+  "order": 8,
+  "demoKey": "ml-pipeline-simulator"
+}

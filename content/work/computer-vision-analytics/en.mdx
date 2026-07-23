@@ -1,0 +1,20 @@
+---
+name: Computer Vision Analytics
+tagline: People counting and dwell time for operational metrics
+impact: Computer vision pipeline for people counting and dwell time analysis generating real-time operational metrics.
+context: Operations needed to understand people flow in physical spaces to optimize staffing and service scale.
+challenges:
+  - Detecting and tracking people with acceptable accuracy on limited hardware
+  - Calculating dwell time even with partial camera occlusion
+  - Aggregating real-time metrics without overloading the database
+decisions:
+  - title: YOLO for detection + IoU-based tracker
+    reasoning: YOLO offers adequate speed for real-time processing. IoU-based tracker is simple and robust enough for low-occlusion scenarios.
+  - title: In-memory aggregation with periodic flush
+    reasoning: Writing to the database every frame would be impractical. Accumulates in memory and persists in 1-minute windows.
+tradeoffs: Data loss on crash between flushes. Acceptable given that operational metrics have tolerance for point-in-time data loss.
+implementation: OpenCV + YOLO pipeline running in a dedicated process. FastAPI exposing aggregated metrics. Dashboard with flow charts by hour.
+learnings:
+  - Calibrating the entry/exit counting line requires on-site testing in the physical space
+  - Lighting varies greatly throughout the day — histogram normalization improves detection consistency
+---

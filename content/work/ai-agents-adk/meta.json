@@ -1,0 +1,14 @@
+{
+  "slug": "ai-agents-adk",
+  "domain": "AI Agents",
+  "stack": [
+    "Python",
+    "ADK",
+    "Vertex AI",
+    "Cloud Run",
+    "BigQuery",
+    "MCP Toolbox"
+  ],
+  "featured": true,
+  "order": 1
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "quark",
+  "domain": "Artificial Life & Simulation",
+  "stack": [
+    "Next.js 16",
+    "React 19",
+    "TypeScript",
+    "PixiJS",
+    "Zustand",
+    "React Flow",
+    "Recharts",
+    "Turborepo",
+    "Cloud Run"
+  ],
+  "status": "live",
+  "featured": true,
+  "order": 1,
+  "links": {
+    "demo": "https://quark.caldasdev.com.br/",
+    "github": "https://github.com/lucastere10/quark-web"
+  },
+  "heroVisual": {
+    "accent": "#00e5cc",
+    "background": "linear-gradient(135deg, #06060f 0%, #0a1628 50%, #06060f 100%)"
+  }
+}

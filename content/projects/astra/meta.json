@@ -1,0 +1,30 @@
+{
+  "slug": "astra",
+  "domain": "Personalized AI & Technology Intelligence",
+  "stack": [
+    "Next.js 16",
+    "React 19",
+    "TypeScript",
+    "Tailwind CSS 4",
+    "shadcn/ui",
+    "Prisma",
+    "Supabase",
+    "PostgreSQL",
+    "Redis",
+    "Python",
+    "OpenAI",
+    "Resend",
+    "Turborepo",
+    "Cloud Run"
+  ],
+  "status": "live",
+  "featured": true,
+  "order": 4,
+  "links": {
+    "demo": "https://astra.caldasdev.com.br"
+  },
+  "heroVisual": {
+    "accent": "#b45309",
+    "background": "linear-gradient(135deg, #0c0a08 0%, #1a1208 50%, #0c0a08 100%)"
+  }
+}

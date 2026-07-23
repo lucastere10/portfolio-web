@@ -1,0 +1,20 @@
+---
+name: Analytics de Visão Computacional
+tagline: Contagem de pessoas e tempo de permanência para métricas operacionais
+impact: Pipeline de visão computacional para contagem de pessoas e análise de tempo de permanência gerando métricas operacionais em tempo real.
+context: Operações precisavam entender fluxo de pessoas em espaços físicos para otimizar recursos e escala de atendimento.
+challenges:
+  - Detectar e rastrear pessoas com precisão aceitável em hardware limitado
+  - Calcular tempo de permanência mesmo com oclusione parcial da câmera
+  - Agregar métricas em tempo real sem sobrecarregar o banco de dados
+decisions:
+  - title: YOLO para detecção + tracker baseado em IoU
+    reasoning: YOLO oferece velocidade adequada para processamento em tempo real. Tracker por IoU é simples e suficientemente robusto para cenários de baixa oclusione.
+  - title: Agregação em memória com flush periódico
+    reasoning: Escrever no banco a cada frame seria impraticável. Acumula em memória e persiste em janelas de 1 minuto.
+tradeoffs: Perda de dado em crash entre flushes. Aceitável dado que métricas operacionais têm tolerância a perda de dados pontual.
+implementation: Pipeline OpenCV + YOLO rodando em processo dedicado. API FastAPI expondo métricas agregadas. Dashboard com gráficos de fluxo por hora.
+learnings:
+  - Calibrar a linha de contagem de entrada/saída requer testes presenciais no espaço físico
+  - Lighting varia muito ao longo do dia — normalização de histograma melhora consistência da detecção
+---

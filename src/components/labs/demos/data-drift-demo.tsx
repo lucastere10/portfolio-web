@@ -8,7 +8,7 @@ import {
   ScenarioPresetBar,
 } from "@/components/labs/scenario-presets";
 import { useLabAnalytics } from "@/components/labs/use-lab-analytics";
-import type { LabDefinition } from "@/lib/labs";
+import type { LabDefinition } from "@/content/schemas";
 
 export function DataDriftDemo({ lab }: { lab: LabDefinition }) {
   const [preset, setPreset] = useState<ScenarioPreset>("happy");

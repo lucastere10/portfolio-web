@@ -1,0 +1,12 @@
+{
+  "slug": "multi-agent-explorer",
+  "domain": "AI Agents & Automation",
+  "tags": [
+    "agents",
+    "adk",
+    "orchestration",
+    "automation"
+  ],
+  "order": 2,
+  "demoKey": "multi-agent-explorer"
+}
