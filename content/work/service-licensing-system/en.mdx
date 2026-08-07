@@ -15,6 +15,6 @@ decisions:
 tradeoffs: Bit-flag makes adding new permissions more rigid. Accepted given that the feature set is stable and small.
 implementation: .NET 8 + EF Core + PostgreSQL. Tokens with SHA-256 + salt hash. JWT for authenticated sessions with permission claims. REST controllers with policy-based authorization.
 learnings:
-  - Never store tokens in plain text — even activation tokens must be hashed
+  - Never store tokens in plain text. Even activation tokens must be hashed
   - Audit log in a separate table for each permission mutation is essential for support
 ---

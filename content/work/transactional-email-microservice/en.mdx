@@ -15,6 +15,6 @@ decisions:
 tradeoffs: "Asynchronous delivery means the sender doesn't immediately know if the email was sent. Acceptable for transactional emails where seconds of latency is tolerated."
 implementation: Python consumer reading from RabbitMQ queue, rendering Jinja2 templates, sending via SMTP with exponential retry. Dead letter queue for persistent failures with operational alerting.
 learnings:
-  - Dead letter queue is essential — without it, failed emails are silently lost
+  - Dead letter queue is essential. Without it, failed emails are silently lost
   - Rate limiting on the consumer prevents SMTP provider bans from burst sending
 ---
