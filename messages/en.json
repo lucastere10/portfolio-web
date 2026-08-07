@@ -50,7 +50,7 @@
     "home": "Back to home"
   },
   "meta": {
-    "titleDefault": "Lucas Caldas — Software Engineer",
+    "titleDefault": "Lucas Caldas · Software Engineer",
     "titleTemplate": "%s | Lucas Caldas",
     "description": "Software engineer specialising in AI agents, cloud architecture on GCP, payment systems, and backend engineering."
   },
@@ -73,14 +73,14 @@
   "projects": {
     "eyebrow": "Projects",
     "title": "Personal Projects",
-    "intro": "Side projects, experiments, and open-source work — built to explore ideas beyond professional case studies. Each entry links to a live demo or detailed overview when available.",
-    "metaDescription": "Personal and open-source projects — experiments, simulations, and side builds.",
+    "intro": "Side projects, experiments, and open-source work built to explore ideas beyond professional case studies. Each entry links to a live demo or detailed overview when available.",
+    "metaDescription": "Personal and open-source projects: experiments, simulations, and side builds.",
     "back": "All personal projects",
     "statusLive": "Live",
     "statusInProgress": "In progress",
     "statusArchived": "Archived",
     "heroDefault": "Personal Project",
-    "heroPreview": "Interactive preview — try the live demo for the full experience",
+    "heroPreview": "Interactive preview. Try the live demo for the full experience",
     "tryDemo": "Try live demo",
     "github": "GitHub",
     "githubWeb": "GitHub (Web)",

@@ -14,7 +14,7 @@ decisions:
   - title: Cloud Run para deploy serverless
     reasoning: Escala zero para instruções infrequentes, integração nativa com Vertex AI e IAM do GCP, sem overhead de gestão de infraestrutura.
   - title: BigQuery como fonte primária de dados analíticos
-    reasoning: Elimina a necessidade de uma camada de cache separada — o agente consulta diretamente BigQuery via SQL gerado, com resultados paginados para caber no contexto.
+    reasoning: Elimina a necessidade de uma camada de cache separada. O agente consulta diretamente BigQuery via SQL gerado, com resultados paginados para caber no contexto.
 tradeoffs: O MCP Toolbox adiciona uma camada de indireção que aumenta a latência em ~200ms por chamada de ferramenta. Aceitável para casos de uso conversacionais, mas não para pipelines de alta frequência.
 implementation: Cada agente é um Cloud Run service com configuração de ferramentas em YAML. O MCP Toolbox gerencia autenticação e exposição das APIs de Jira e Looker. O orquestrador em Python usa o ADK para decidir qual ferramenta invocar com base no contexto da conversa.
 learnings:

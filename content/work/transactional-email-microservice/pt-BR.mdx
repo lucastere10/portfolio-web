@@ -15,6 +15,6 @@ decisions:
 tradeoffs: Delivery assíncrono significa que o remetente não sabe imediatamente se o email foi enviado. Aceitável para emails transacionais onde latência de segundos é tolerada.
 implementation: Consumer Python lendo de fila RabbitMQ, renderizando templates Jinja2, enviando via SMTP com retry exponencial. Dead letter queue para falhas persistentes com alerta operacional.
 learnings:
-  - Dead letter queue é essencial — sem ela emails falhos são perdidos silenciosamente
+  - Dead letter queue é essencial. Sem ela, emails falhos são perdidos silenciosamente
   - Rate limiting no consumer evita ban do provider SMTP por envio em ráfagas
 ---

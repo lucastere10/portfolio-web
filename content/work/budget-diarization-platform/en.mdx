@@ -2,12 +2,12 @@
 name: Budget Diarization Platform
 tagline: Monthly commercial budget split into daily store-category rows with audited calibration
 impact: Replaced a spreadsheet-heavy monthly planning cycle with a guided wizard that validates inputs, applies historical share weights, preserves monthly totals under calibration, and exports versioned warehouse-shaped files.
-context: The team needed to automate monthly multi-store commercial budget planning — turning monthly totals into daily amounts by store and category with fidelity to warehouse conventions, instead of fragile spreadsheet workflows.
+context: "The team needed to automate monthly multi-store commercial budget planning: turning monthly totals into daily amounts by store and category with fidelity to warehouse conventions, instead of fragile spreadsheet workflows."
 challenges:
   - Enforcing accounting identities and signed deduction conventions aligned to the warehouse
   - Deriving daily share weights from historical revenue when some store-days are closed or missing history
   - Allowing manual calibration without breaking monthly gross-revenue and profit totals
-  - Keeping a strict dual-database boundary — read-only warehouse history vs. app persistence for versioned exports
+  - "Keeping a strict dual-database boundary: read-only warehouse history vs. app persistence for versioned exports"
 decisions:
   - title: Historical share-based diarization with uniform fallback
     reasoning: Daily weights come from historical gross revenue per store×category. When history is missing, uniform shares keep the cycle unblocked; closed days trigger renormalization so monthly totals still close.
@@ -17,10 +17,10 @@ decisions:
     reasoning: Planners can adjust selected fields at row, day, or store-day scope. Locked rows are excluded from redistribution; complementary fields are rateio'd so monthly invariants hold. Every change stores justification and snapshots for undo.
   - title: Chunked versioned export persistence
     reasoning: Large warehouse-shaped exports are persisted in begin/append/finalize steps to avoid proxy size limits, with abort on failure and a current-version flag for history rehydrate.
-tradeoffs: Output quality depends on warehouse history coverage — thin history falls back to uniform shares and needs more calibration. The multi-step wizard is heavier than a single spreadsheet, but critical validation gates and auditability outweigh the friction.
-implementation: Full-stack TypeScript app (TanStack Start) with a Zustand-backed wizard — upload, validate, reference mapping, diarization, calibration, holidays, export, and history. Server functions talk to SQL Server for historical shares and MySQL for versioned exports via dbmate migrations. Docker image deployed to Kubernetes through a CI pipeline.
+tradeoffs: Output quality depends on warehouse history coverage. Thin history falls back to uniform shares and needs more calibration. The multi-step wizard is heavier than a single spreadsheet, but critical validation gates and auditability outweigh the friction.
+implementation: "Full-stack TypeScript app (TanStack Start) with a Zustand-backed wizard: upload, validate, reference mapping, diarization, calibration, holidays, export, and history. Server functions talk to SQL Server for historical shares and MySQL for versioned exports via dbmate migrations. Docker image deployed to Kubernetes through a CI pipeline."
 learnings:
   - Warehouse sign conventions for taxes and cost deductions must be normalized at ingest or identity checks fire false positives
   - Closed-store days require share renormalization; otherwise daily rows underfill the monthly total
-  - Chunked persistence is necessary once export payloads hit reverse-proxy body limits — draft abort prevents orphan partial versions
+  - Chunked persistence is necessary once export payloads hit reverse-proxy body limits. Draft abort prevents orphan partial versions
 ---
