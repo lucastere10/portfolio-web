@@ -251,7 +251,7 @@ export function HeroSection({
                 <h1
                   className="font-sans font-black uppercase tracking-[-0.02em] max-w-xl"
                   style={{
-                    fontSize: "clamp(1.75rem, 4.2vw, 3.2rem)",
+                    fontSize: "clamp(1.75rem, 4.2vw, 2.6rem)",
                     lineHeight: "1.05",
                     color: "var(--hero-text)",
                   }}

@@ -1,7 +1,7 @@
 ---
 name: GPOS Payment System
 tagline: ".NET/C# backend for PIX and cards with mTLS authentication"
-impact: "Complete .NET/C# payment system with PIX, cards, mTLS, and remote terminal registration — eliminating the need to ship physical devices."
+impact: "Complete .NET/C# payment system with PIX, cards, mTLS, and remote terminal registration, eliminating the need to ship physical devices."
 context: The GPOS product needed a robust backend to process payments via PIX and cards, with mutual authentication between terminals and the server, and remote registration of new devices.
 challenges:
   - Implementing mTLS for mutual authentication between physical terminals and the server
@@ -18,9 +18,9 @@ decisions:
 tradeoffs: mTLS adds complexity to certificate lifecycle management (expiration, revocation). It was necessary to implement an automatic renewal process before expiry.
 implementation: .NET 8 with ASP.NET Core, Kestrel configuration for mTLS with private CA validation. PIX implemented following the BACEN SPI specification. Terminal registration via authenticated endpoint with multiple verification factors.
 learnings:
-  - "BACEN's PIX documentation is extensive but precise — following it exactly avoids rejections during integration"
+  - "BACEN's PIX documentation is extensive but precise. Following it exactly avoids rejections during integration"
   - Implementing a circuit breaker on PSP calls prevents cascade failures during bank unavailability
-  - Immutable transaction logs are mandatory for auditing — never UPDATE payment records
+  - Immutable transaction logs are mandatory for auditing. Never UPDATE payment records
 metrics:
   - label: Payment methods
     value: PIX + Cards

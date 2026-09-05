@@ -196,6 +196,8 @@ export type LabDefinition = z.infer<typeof labDefinitionSchema>;
 export const pageDomainSchema = z.object({
   title: z.string(),
   description: z.string(),
+  /** Internal path to a concrete case or lab (no locale prefix). */
+  proofHref: z.string().min(1),
 });
 
 export type PageDomain = z.infer<typeof pageDomainSchema>;
@@ -204,8 +206,7 @@ export const homePageSchema = z.object({
   domains: z.array(pageDomainSchema).min(1),
   labsTitle: z.string(),
   labsBody: z.string(),
-  labsPipelineLabel: z.string(),
-  labsPipelineLines: z.array(z.string()).min(1),
+  featuredLabSlugs: z.array(z.string().min(1)).length(3),
   aboutBlurb: z.string(),
   ctaTitle: z.string(),
   ctaBody: z.string(),

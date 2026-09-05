@@ -1,12 +1,12 @@
 ---
 name: "Astra"
 tagline: "Inteligência personalizada em IA e tecnologia, no Daily ou no Weekly."
-overview: "A Astra ranqueia o sinal de tecnologia conforme seus interesses e entrega como newsletter personalizada — inteligência primeiro, inbox depois. Um coletor em Python ingere continuamente artigos de RSS curados, scrapers e fontes Exa opcionais, enriquece com IA (resumos, tópicos, keywords, embeddings, scores de qualidade) e remove quase-duplicatas. Um motor de recomendação composto ranqueia por afinidade de tópico, engajamento, frescor, diversidade e qualidade global — sem depender só de prompts LLM. Usuários recebem digests Astra Daily ou Weekly via Resend, com tracking de abertura/clique alimentando o ranking."
+overview: "A Astra ranqueia o sinal de tecnologia conforme seus interesses e entrega como newsletter personalizada. O foco é a camada de inteligência, não só encher a inbox. Um coletor em Python ingere continuamente artigos de RSS curados, scrapers e fontes Exa opcionais, enriquece com IA (resumos, tópicos, keywords, embeddings, scores de qualidade) e remove quase-duplicatas. Um motor de recomendação composto ranqueia por afinidade de tópico, engajamento, frescor, diversidade e qualidade global, sem depender só de prompts LLM. Usuários recebem digests Astra Daily ou Weekly via Resend, com tracking de abertura/clique alimentando o ranking."
 highlights:
   - "Coletor Python desacoplado do Next.js, compartilhando schema PostgreSQL Prisma/Supabase via SQLAlchemy"
   - "Ranking composto com 5 sinais (qualidade, afinidade, engajamento, frescor, diversidade) e cache Redis opcional"
   - "Pipeline: collect → enrich → embed → dedup → score → deliver (cadências Daily/Weekly)"
-  - "Produção no GCP Cloud Run — astra-web, astra-collect, astra-deliver — com Cloud Scheduler"
+  - "Produção no GCP Cloud Run (astra-web, astra-collect, astra-deliver) com Cloud Scheduler"
 features:
   - "Landing SaaS com preview de newsletter, how-it-works e onboarding"
   - "Auth por magic link e preferências de tópicos ponderadas em 11 categorias"
@@ -16,7 +16,7 @@ features:
   - "Console admin para fontes, artigos, runs do worker, newsletters e analytics"
   - "Módulos de domínio para auth, preferências, recomendação, newsletter, analytics e unsubscribe"
   - "Monorepo Turborepo com primitivas de scoring e branding compartilhadas entre TypeScript e Python"
-  - "Degradação graciosa — Redis, OpenAI, Exa e Resend opcionais no desenvolvimento local"
+  - "Degradação graciosa: Redis, OpenAI, Exa e Resend opcionais no desenvolvimento local"
 technicalNotes: "Monorepo Turborepo: `apps/web` (Next.js 16 App Router), `workers/collector` (Python feedparser + BeautifulSoup + OpenAI via SQLAlchemy no schema Prisma) e packages de database, scoring/topics/branding e shadcn/ui. O ranking combina cinco sinais ponderados em TypeScript; o coletor enriquece e embute offline quando OpenAI não está disponível. Em produção, três serviços Cloud Run com Cloud Scheduler disparam collect e deliver."
 metrics:
   - label: "Serviços Cloud Run"

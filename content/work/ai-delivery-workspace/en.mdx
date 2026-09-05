@@ -1,8 +1,8 @@
 ---
 name: AI Delivery Workspace
 tagline: Methodology-driven project workspace with AI-assisted document generation
-impact: SPA that operationalizes delivery methodology — projects, iterations, versioned artifacts, and async AI document pipelines with dependency-aware generation and in-browser editing.
-context: The team needed a workspace to run software-delivery methodology end to end — manage projects and iterations, collect input artifacts, generate PRDs and downstream deliverables with AI assistance, track approval status, and edit or compare document versions without leaving the browser.
+impact: "SPA that operationalizes delivery methodology: projects, iterations, versioned artifacts, and async AI document pipelines with dependency-aware generation and in-browser editing."
+context: "The team needed a workspace to run software-delivery methodology end to end: manage projects and iterations, collect input artifacts, generate PRDs and downstream deliverables with AI assistance, track approval status, and edit or compare document versions without leaving the browser."
 challenges:
   - Orchestrating long-running document generation without blocking the UI
   - Enforcing dependency order between document types so generation quality does not degrade
@@ -10,14 +10,14 @@ challenges:
   - Authenticating a public SPA against an OIDC identity provider while calling BaaS APIs and automation webhooks
 decisions:
   - title: BaaS for CRUD and file storage, automation platform for AI generation
-    reasoning: Edge functions and object storage handle projects, iterations, and artifact files. Document generation posts structured payloads to automation webhooks that read from storage and write results back — keeping the SPA thin and pipelines swappable.
+    reasoning: Edge functions and object storage handle projects, iterations, and artifact files. Document generation posts structured payloads to automation webhooks that read from storage and write results back, keeping the SPA thin and pipelines swappable.
   - title: Artifact dependency matrix before generation
     reasoning: Downstream artifacts require validated upstream documents. A typed dependency matrix blocks generation until references exist, improving output quality and reducing wasted pipeline runs.
   - title: TipTap editors plus Myers diff for version compare
     reasoning: TipTap covers markdown/HTML editing with paste sanitization; a custom Myers/LCS diff powers side-by-side version compare for large documents without shipping a heavy third-party stack.
   - title: Async generation UX with polling
     reasoning: Long workflows cannot return synchronously. A generation context plus polling refreshes artifact status lists until processing completes or fails.
-tradeoffs: Coupling to external automation workflows means pipeline changes can break the SPA contract — mitigated with typed payloads and env-specific webhook bases. Polling is simpler than websockets but adds request noise on long jobs. Embedding an OIDC client secret in a SPA is a security smell; password-grant convenience traded for a weaker public-client model that should move to a proper public OIDC flow.
+tradeoffs: Coupling to external automation workflows means pipeline changes can break the SPA contract. That is mitigated with typed payloads and env-specific webhook bases. Polling is simpler than websockets but adds request noise on long jobs. Embedding an OIDC client secret in a SPA is a security smell; password-grant convenience traded for a weaker public-client model that should move to a proper public OIDC flow.
 implementation: React/Vite SPA with protected routes, project tables, ideation workspace, drag-drop uploads to object storage, TipTap and hierarchical backlog editors, version compare, and multi-env CI/CD serving via nginx with health probes.
 learnings:
   - Validated upstream references materially improve AI document quality versus generating from raw uploads alone

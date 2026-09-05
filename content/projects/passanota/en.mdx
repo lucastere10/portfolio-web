@@ -1,23 +1,23 @@
 ---
 name: "PassaNota"
 tagline: "Every receipt recorded. Every expense under control."
-overview: "PassaNota is a B2B expense-control platform for Brazilian businesses. Teams photograph fiscal receipts on desktop or paired mobile devices; a vision LLM pipeline extracts structured data — vendor, line items, totals, and dates — without manual entry. Managers get dashboards with spend trends, category breakdowns, and top products, while operators capture receipts in the field. The system supports multi-company tenancy, role-based access, and platform-level admin tooling, deployed on GCP Cloud Run with Supabase auth and service-to-service IAM between frontend and API."
+overview: "PassaNota is a B2B expense-control platform for Brazilian businesses. Teams photograph fiscal receipts on desktop or paired mobile devices; a vision LLM pipeline extracts structured data (vendor, line items, totals, and dates) without manual entry. Managers get dashboards with spend trends, category breakdowns, and top products, while operators capture receipts in the field. The system supports multi-company tenancy, role-based access, and platform-level admin tooling, deployed on GCP Cloud Run with Supabase auth and service-to-service IAM between frontend and API."
 highlights:
-  - "End-to-end AI receipt pipeline — OpenCV document preprocessing plus multi-provider vision LLM extraction"
-  - "Production BFF architecture — Next.js proxy with Cloud Run IAM, Supabase JWT forwarding, and multi-tenant headers"
-  - "Multi-tenant SaaS design — gestor/operador roles, QR + PIN device pairing, platform admin overview"
-  - "Split architecture — Next.js frontend (`passanota-web`) and FastAPI backend (`passanota-api`) on GCP"
+  - "End-to-end AI receipt pipeline: OpenCV document preprocessing plus multi-provider vision LLM extraction"
+  - "Production BFF architecture: Next.js proxy with Cloud Run IAM, Supabase JWT forwarding, and multi-tenant headers"
+  - "Multi-tenant SaaS design: gestor/operador roles, QR + PIN device pairing, platform admin overview"
+  - "Split architecture: Next.js frontend (`passanota-web`) and FastAPI backend (`passanota-api`) on GCP"
 features:
   - "AI-powered receipt capture via file upload or live camera with document detection"
   - "Async background processing with capture status tracking via Cloud Tasks"
-  - "Spend dashboard — totals, average ticket, period comparison, category and emitter charts"
+  - "Spend dashboard: totals, average ticket, period comparison, category and emitter charts"
   - "Paginated invoice list with detailed line-item views and AI confidence badges"
   - "Manual item editing and categorization when extraction needs correction"
   - "Semantic product search over invoice line items using pgvector embeddings"
   - "Multi-company support with empresa switcher and isolated tenant data"
   - "Mobile device pairing (QR code + PIN) for field operators without full login"
   - "Passwordless Supabase magic-link authentication with profile completion flow"
-  - "Platform admin panel — company metrics, usage tracking, and tenant management"
+  - "Platform admin panel: company metrics, usage tracking, and tenant management"
 technicalNotes: "The Next.js app routes all API calls through a BFF proxy at `/api/proxy/*`, forwarding the Supabase Bearer token, `X-Empresa-Id`, and device tokens. In production, the proxy swaps the user JWT for a Cloud Run IAM ID token to reach the private FastAPI service. The API runs an async pipeline: store photo in Supabase Storage, enqueue Cloud Tasks, OpenCV preprocess, vision LLM extract, persist items, then SQL-normalize categories with keyword and embedding refinement. Semantic search uses pgvector HNSW indexes on multilingual sentence embeddings."
 metrics:
   - label: "Stack"
@@ -29,8 +29,8 @@ metrics:
   - label: "Deploy"
     value: "GCP Cloud Run"
 learnings:
-  - "Vision LLMs handle messy thermal receipts better than template OCR — preprocessing with OpenCV still matters for extraction quality"
+  - "Vision LLMs handle messy thermal receipts better than template OCR. Preprocessing with OpenCV still matters for extraction quality"
   - "A BFF layer with Cloud Run IAM is the cleanest way to keep the API private while forwarding Supabase user context"
-  - "Hybrid categorization — LLM first pass plus SQL keyword/embedding refinement — keeps taxonomy consistent across tenants"
+  - "Hybrid categorization (LLM first pass plus SQL keyword/embedding refinement) keeps taxonomy consistent across tenants"
 heroLabel: "Cost control via fiscal invoices"
 ---
